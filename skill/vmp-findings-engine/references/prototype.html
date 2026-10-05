@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>VMP — Findings Assessment</title>
+<style>
+  :root{
+    --ink:#13161b; --ink-2:#3d434e; --mute:#6b7280; --faint:#9aa1ab;
+    --line:#e5e7eb; --line-2:#eef0f3; --bg:#f6f7f9; --panel:#ffffff;
+    --accent:#1f5fb0; --accent-ink:#17457f; --accent-bg:#eaf1fa;
+    --crit:#b4232a; --crit-bg:#fbeceb; --high:#c2560f; --high-bg:#fbeee3;
+    --med:#8a6d0d; --med-bg:#f8f1d9; --low:#2f6f8f; --low-bg:#e8f1f5;
+    --ok:#2c7a4b; --ok-bg:#e7f3ec;
+    --radius:10px;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *,*::before,*::after{box-sizing:inherit}
+  html,body{margin:0}
+  body{
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg); color:var(--ink); font-size:14px; line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --ink:#e9ecf1; --ink-2:#c2c7d0; --mute:#9aa1ab; --faint:#6b7280;
+      --line:#2a2f37; --line-2:#22262d; --bg:#0f1114; --panel:#161a1f;
+      --accent:#6ea8f0; --accent-ink:#9cc3f5; --accent-bg:#13202f;
+      --crit:#f0888d; --crit-bg:#2b1618; --high:#e8a362; --high-bg:#2a1d12;
+      --med:#d8bd63; --med-bg:#241f10; --low:#8fc0d8; --low-bg:#12222a;
+      --ok:#7fc79b; --ok-bg:#122019;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#e9ecf1; --ink-2:#c2c7d0; --mute:#9aa1ab; --faint:#6b7280;
+    --line:#2a2f37; --line-2:#22262d; --bg:#0f1114; --panel:#161a1f;
+    --accent:#6ea8f0; --accent-ink:#9cc3f5; --accent-bg:#13202f;
+    --crit:#f0888d; --crit-bg:#2b1618; --high:#e8a362; --high-bg:#2a1d12;
+    --med:#d8bd63; --med-bg:#241f10; --low:#8fc0d8; --low-bg:#12222a;
+    --ok:#7fc79b; --ok-bg:#122019;
+  }
+
+  header.top{
+    display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;
+    padding:18px 22px; border-bottom:1px solid var(--line); background:var(--panel);
+  }
+  .brand{font-weight:680; letter-spacing:-0.01em; font-size:16px}
+  .brand .v{color:var(--accent)}
+  .sub{color:var(--mute); font-size:13px}
+  .scan-meta{margin-left:auto; color:var(--mute); font-size:12.5px; text-align:right; line-height:1.7}
+  .scan-meta b{color:var(--ink-2); font-weight:600}
+  .theme-btn{margin-left:10px; border:1px solid var(--line); background:var(--panel); color:var(--mute); border-radius:7px; padding:4px 9px; font-size:12px; cursor:pointer}
+
+  .wrap{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.05fr); gap:0; min-height:calc(100vh - 62px)}
+  @media(max-width:920px){ .wrap{grid-template-columns:1fr} .detail{border-left:0;border-top:1px solid var(--line)} }
+
+  /* LEFT */
+  .queue{padding:16px 20px; min-width:0}
+  .viewtabs{display:inline-flex; background:var(--bg); border:1px solid var(--line); border-radius:9px; padding:3px; margin-bottom:16px}
+  .viewtabs button{
+    border:0; background:transparent; color:var(--mute); font:inherit; font-size:13px; font-weight:560;
+    padding:6px 14px; border-radius:7px; cursor:pointer;
+  }
+  .viewtabs button[aria-pressed="true"]{background:var(--panel); color:var(--ink); box-shadow:0 1px 2px rgba(0,0,0,.06)}
+
+  .insight{
+    background:var(--accent-bg); border:1px solid color-mix(in srgb,var(--accent) 22%, transparent);
+    border-radius:var(--radius); padding:13px 15px; margin-bottom:16px; font-size:13px; line-height:1.55; color:var(--ink-2);
+  }
+  .insight b{color:var(--ink); font-weight:650}
+  .insight .k{display:block; font-size:11.5px; color:var(--accent-ink); font-weight:620; margin-bottom:4px; letter-spacing:.01em}
+
+  .queue-head{display:flex; align-items:center; gap:10px; margin:2px 2px 12px}
+  .queue-head h1{font-size:15px; margin:0; font-weight:620}
+  .count{color:var(--faint); font-weight:500}
+
+  .filters{display:flex; gap:7px; margin-bottom:14px; flex-wrap:wrap}
+  .chip{border:1px solid var(--line); background:var(--panel); color:var(--ink-2); padding:5px 11px; border-radius:999px; font-size:12.5px; cursor:pointer; user-select:none}
+  .chip[aria-pressed="true"]{background:var(--ink); color:var(--panel); border-color:var(--ink)}
+  .chip .n{opacity:.6; margin-left:4px}
+
+  /* action card */
+  .act{
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    padding:14px 16px; margin-bottom:10px; cursor:pointer; transition:border-color .12s, box-shadow .12s;
+  }
+  .act:hover{border-color:var(--accent)}
+  .act[aria-selected="true"]{border-color:var(--accent); box-shadow:inset 3px 0 0 var(--accent)}
+  .act-top{display:flex; align-items:center; gap:9px; margin-bottom:8px}
+  .rank{font-size:12px; font-weight:680; color:var(--faint); font-variant-numeric:tabular-nums}
+  .fixtype{font-size:11px; font-weight:620; padding:2px 8px; border-radius:5px; background:var(--bg); color:var(--ink-2); border:1px solid var(--line)}
+  .retire{margin-left:auto; text-align:right}
+  .retire .big{font-weight:700; font-size:15px; font-variant-numeric:tabular-nums}
+  .retire .lbl{font-size:10.5px; color:var(--mute); display:block; margin-top:-1px}
+  .act h3{font-size:14px; margin:0 0 8px; font-weight:580; line-height:1.4}
+  .act-stats{display:flex; gap:14px; align-items:center; font-size:12px; color:var(--mute)}
+  .act-stats .s b{color:var(--ink-2); font-weight:640}
+  .sevdots{display:inline-flex; gap:3px; align-items:center}
+  .dot{width:8px; height:8px; border-radius:50%}
+  .dot.crit{background:var(--crit)} .dot.high{background:var(--high)} .dot.med{background:var(--med)} .dot.low{background:var(--low)}
+
+  /* finding card */
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:12px 14px; margin-bottom:9px; cursor:pointer; transition:border-color .12s, box-shadow .12s}
+  .card:hover{border-color:var(--accent)}
+  .card[aria-selected="true"]{border-color:var(--accent); box-shadow:inset 3px 0 0 var(--accent)}
+  .card-top{display:flex; align-items:center; gap:8px; margin-bottom:6px}
+  .sev{font-size:11px; font-weight:680; padding:2px 8px; border-radius:5px; letter-spacing:.02em}
+  .sev.crit{background:var(--crit-bg); color:var(--crit)} .sev.high{background:var(--high-bg); color:var(--high)}
+  .sev.med{background:var(--med-bg); color:var(--med)} .sev.low{background:var(--low-bg); color:var(--low)}
+  .evrs{margin-left:auto; font-weight:680; font-size:14px; font-variant-numeric:tabular-nums}
+  .card h3{font-size:13px; margin:0 0 6px; font-weight:560; line-height:1.4}
+  .card-meta{display:flex; gap:6px; flex-wrap:wrap; align-items:center; color:var(--mute); font-size:12px}
+  .tag{border:1px solid var(--line); border-radius:5px; padding:1px 7px; font-size:11.5px; color:var(--ink-2)}
+  .tag.shape{text-transform:capitalize}
+  .conf{font-size:11.5px; font-weight:620; padding:1px 7px; border-radius:5px}
+  .conf.confirmed{background:var(--ok-bg); color:var(--ok)} .conf.likely{background:var(--med-bg); color:var(--med)} .conf.unvalidated{background:var(--low-bg); color:var(--low)}
+  .fp{font-size:11.5px; color:var(--mute)} .fp b{font-weight:640}
+  .fp.low-likelihood b{color:var(--crit)} .fp.needs-review b{color:var(--high)} .fp.deterministic b{color:var(--ok)}
+
+  /* RIGHT detail */
+  .detail{background:var(--panel); border-left:1px solid var(--line); padding:22px 24px; min-width:0}
+  .back{display:inline-flex; align-items:center; gap:6px; font-size:12.5px; color:var(--accent); cursor:pointer; margin-bottom:14px; font-weight:560}
+  .back:hover{text-decoration:underline}
+  .d-head{display:flex; align-items:flex-start; gap:12px; margin-bottom:4px}
+  .d-head .sev{margin-top:2px}
+  .d-title{font-size:17px; font-weight:620; line-height:1.35; margin:0; letter-spacing:-0.01em}
+  .d-loc{color:var(--mute); font-size:12.5px; margin:6px 0 0; word-break:break-all}
+  .d-loc code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px}
+  .d-loc b{color:var(--ink-2); font-weight:650}
+
+  .grid2{display:grid; grid-template-columns:1.5fr 1fr; gap:14px; margin-top:20px}
+  @media(max-width:560px){.grid2{grid-template-columns:1fr}}
+  .block{border:1px solid var(--line); border-radius:var(--radius); padding:14px 16px}
+  .block h4{font-size:12px; font-weight:600; color:var(--mute); margin:0 0 11px; letter-spacing:.01em}
+  .factor{display:flex; gap:9px; align-items:flex-start; padding:5px 0; font-size:13px; color:var(--ink-2); line-height:1.5}
+  .factor .mk{flex:none; width:15px; text-align:center; font-weight:700; line-height:1.4}
+  .factor.up .mk{color:var(--crit)} .factor.down .mk{color:var(--ok)}
+  .hr{height:1px; background:var(--line-2); margin:11px 0}
+
+  .score-wrap{text-align:center; padding:6px 0 10px}
+  .score{font-size:46px; font-weight:700; line-height:1; letter-spacing:-0.02em; font-variant-numeric:tabular-nums}
+  .score-band{font-size:12.5px; color:var(--mute); margin-top:5px}
+  .meter{height:6px; border-radius:3px; background:linear-gradient(90deg,var(--ok),var(--med),var(--high),var(--crit)); margin:12px 2px 0; position:relative}
+  .meter .pin{position:absolute; top:-3px; width:2px; height:12px; background:var(--ink); border-radius:2px; transform:translateX(-1px)}
+
+  .mini{border:1px solid var(--line); border-radius:var(--radius); padding:12px 14px; margin-top:12px}
+  .mini .lbl{font-size:12px; color:var(--mute); margin-bottom:5px}
+  .mini .val{font-size:14px; font-weight:580}
+  .mini .note{font-size:12px; color:var(--mute); margin-top:4px; line-height:1.5}
+
+  .why{border:1px solid var(--line); border-radius:var(--radius); padding:15px 17px; margin-top:16px; background:var(--bg)}
+  .why h4{margin:0 0 8px; font-size:12px; color:var(--mute); font-weight:600}
+  .why p{margin:0; font-size:13.5px; line-height:1.65; color:var(--ink-2)}
+  .why .src{border-top:1px solid var(--line); margin-top:12px; padding-top:9px; font-size:12px; color:var(--faint)}
+
+  .cvss-row{display:flex; gap:7px; align-items:center; flex-wrap:wrap; margin-top:3px}
+  .cvss-pill{font-size:12px; border:1px solid var(--line); border-radius:6px; padding:2px 8px; color:var(--ink-2); font-variant-numeric:tabular-nums}
+  .cvss-pill.sel{border-color:var(--accent); color:var(--accent-ink); font-weight:620}
+  .disagree{font-size:11.5px; color:var(--high); font-weight:600; margin-top:7px}
+
+  .evbox{margin-top:16px; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden}
+  .evbox summary{cursor:pointer; padding:11px 15px; font-size:12.5px; font-weight:600; color:var(--ink-2); list-style:none; display:flex; align-items:center; gap:8px}
+  .evbox summary::-webkit-details-marker{display:none}
+  .evbox summary::before{content:"›"; font-size:16px; transition:transform .15s; color:var(--faint)}
+  .evbox[open] summary::before{transform:rotate(90deg)}
+  .evbox pre{margin:0; padding:0 15px 14px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11.5px; color:var(--ink-2); white-space:pre-wrap; word-break:break-all; line-height:1.6}
+  .gap{display:inline-block; font-size:11px; background:var(--med-bg); color:var(--med); border-radius:4px; padding:1px 7px; margin-top:8px; font-weight:600}
+
+  /* action detail */
+  .steps{counter-reset:s; margin:0; padding:0; list-style:none}
+  .steps li{counter-increment:s; position:relative; padding:7px 0 7px 30px; font-size:13.5px; color:var(--ink-2); line-height:1.5; border-bottom:1px solid var(--line-2)}
+  .steps li:last-child{border-bottom:0}
+  .steps li::before{content:counter(s); position:absolute; left:0; top:7px; width:20px; height:20px; border-radius:50%; background:var(--accent-bg); color:var(--accent-ink); font-size:11px; font-weight:680; display:flex; align-items:center; justify-content:center}
+  .retires-head{display:flex; align-items:center; justify-content:space-between; margin:20px 2px 10px}
+  .retires-head h4{margin:0; font-size:12px; color:var(--mute); font-weight:600}
+</style>
+</head>
+<body>
+<header class="top">
+  <span class="brand"><span class="v">VMP</span> · Findings Assessment</span>
+  <span class="sub">prototype · real fixture data</span>
+  <span class="scan-meta">
+    sources: <b>Nessus</b>, <b>Trivy</b>, <b>Mirror</b> · 10 findings normalised<br>
+    scores are computed, not scanner-supplied · actions are clustered by the reasoning layer
+  </span>
+  <button class="theme-btn" id="themeBtn">theme</button>
+</header>
+
+<div class="wrap">
+  <section class="queue">
+    <div class="viewtabs">
+      <button data-v="actions" aria-pressed="true">Remediation actions</button>
+      <button data-v="findings" aria-pressed="false">All findings</button>
+    </div>
+    <div id="leftbody"></div>
+  </section>
+  <section class="detail" id="detail"></section>
+</div>
+
+<script>
+/* ---------------------------------------------------------------------------
+   Findings: 10 normalised from real sources. Source values (CVSS, versions,
+   confidence, evidence, CVE/CWE, host/package/endpoint) are traced from the
+   Nessus / Trivy / Mirror fixture data. Factor wording and the exact computed
+   score are illustrative of how the model behaves.
+---------------------------------------------------------------------------- */
+const F = {
+  sqli:{
+    id:"sqli", shape:"endpoint", title:"SQL injection: login authentication bypass",
+    sevComputed:"crit", sevLabel:"Critical", evrs:94, band:"Very high",
+    loc:'<code>POST /auth/login/</code> · parameter <code>email, password</code>',
+    source:{tool:"Mirror"}, confidence:"likely",
+    cvss:[{src:"mirror",ver:"3.1",base:9.8,sel:true}], cvssSelRule:"single source",
+    up:["Payload delivery observed in network capture","Pre-auth endpoint on an internet-facing financial ERP","Full auth bypass and ERP data access if exploited"],
+    down:["No proof-of-concept script captured — not fully reproduced"],
+    fp:{band:"low-likelihood",label:"Low FP likelihood",note:"Tool asserts Likely; payload delivery observed. Endpoint shape rests on confidence + reachability, not version math."},
+    seenBy:"1 scanner, 1 endpoint", sevNote:"Scanner and computed agree (Critical).",
+    why:"Scored 94: a critical pre-auth injection on an internet-facing financial ERP with observed payload delivery. Held below a theoretical 98 because Mirror rated it Likely, not Confirmed — no full exploitation path, no PoC.",
+    whySrc:"Severity from CVSS 9.8 + exposure. Confidence from Mirror. No CVE — KEV/EPSS N/A.",
+    evidence:{label:"Request / payload evidence",gaps:["no proof-of-concept script"],text:`POST /auth/login/ HTTP/1.1
+Host: erp.fintec.solutions
+Content-Type: application/json
+
+{"email": "' OR '1'='1'--", "password": "x"}
+
+indicator: Playwright capture confirmed payload delivery`}
+  },
+  cleartext:{
+    id:"cleartext", shape:"endpoint", title:"API credentials transmitted over cleartext HTTP",
+    sevComputed:"crit", sevLabel:"Critical", evrs:88, band:"Very high",
+    loc:'<code>POST /auth/login/</code> · transport',
+    source:{tool:"Mirror"}, confidence:"likely",
+    cvss:[{src:"mirror",ver:"3.1",base:9.1,sel:true}], cvssSelRule:"single source",
+    up:["Auth tokens and PII sent without TLS","Interceptable by any network attacker (MITM, Wi-Fi, ISP)"],
+    down:["Shares endpoint with the injection fix — one piece of work"],
+    fp:{band:"low-likelihood",label:"Low FP likelihood",note:"Transport observed over HTTP in capture. Config-level, directly verifiable."},
+    seenBy:"1 scanner, 1 endpoint", sevNote:"Scanner and computed agree (Critical).",
+    why:"Scored 88: credentials and PII in cleartext on the same auth flow. Slightly below the injection because it enables interception rather than direct compromise, but it compounds every other auth weakness.",
+    whySrc:"Severity from CVSS 9.1 + exposure. Config-level transport issue.",
+    evidence:{label:"Transport evidence",gaps:[],text:`endpoint: POST /auth/login/
+transport: HTTP (no TLS)
+exposed: auth tokens, financial data, session credentials
+fix: enforce HTTPS + HSTS at API tier`}
+  },
+  jfwhash:{
+    id:"jfwhash", shape:"endpoint", title:"Authentication bypass via forged JFWHash",
+    sevComputed:"high", sevLabel:"High", evrs:72, band:"Elevated",
+    loc:'<code>POST /auth/authenticate</code>',
+    source:{tool:"Mirror"}, confidence:"likely",
+    cvss:[{src:"mirror",ver:"3.1",base:9.1,sel:true}], cvssSelRule:"single source",
+    up:["Forged signing hash accepted by auth endpoint","Shares root cause with credential-handling weakness"],
+    down:["Depends on the exposed HMAC key (addressed by A1)","Rated High pending reproduction"],
+    fp:{band:"needs-review",label:"Needs review",note:"Potential tier — indicators consistent, manual confirmation needed."},
+    seenBy:"1 scanner, 1 endpoint", sevNote:"Scanner Critical; computed High (depends on A1 key exposure).",
+    why:"Scored 72: a credential-forgery path that chains off the exposed signing key. Computed below the scanner's Critical because its exploitability is gated by the key exposure that action A1 removes — fix A1 and this weakens materially.",
+    whySrc:"Severity adjusted down for dependency on A1. Confidence Potential.",
+    evidence:{label:"Evidence",gaps:["no proof-of-concept script"],text:`endpoint: POST /auth/authenticate
+issue: forged JFWHash accepted
+depends on: HMAC key exposed in JS bundle (see A1)`}
+  },
+  hmac:{
+    id:"hmac", shape:"endpoint", title:"HMAC request-signing key exposed in public JS bundle",
+    sevComputed:"crit", sevLabel:"Critical", evrs:86, band:"Very high",
+    loc:'<code>GET /main.{hash}.js</code>',
+    source:{tool:"Mirror"}, confidence:"unvalidated",
+    cvss:[{src:"mirror",ver:"3.1",base:9.8,sel:true}], cvssSelRule:"single source",
+    up:["Live signing key readable in a public bundle","Enables request forgery across signed endpoints"],
+    down:["Only response headers captured — body not recorded","Mapped CWE-1000 (inferred, unclassified)"],
+    fp:{band:"needs-review",label:"Needs review",note:"Potential tier, inferred mapping, partial evidence. Key string present but unverified against a signing call."},
+    seenBy:"1 scanner, 1 bundle", sevNote:"Scanner Critical; computed Critical, confidence low.",
+    why:"Scored 86: a live request-signing key in a public bundle is high-impact, but evidence is partial (headers only) and the CWE mapping is inferred CWE-1000. The score reflects impact tempered by low validation confidence.",
+    whySrc:"Severity from CVSS 9.8. Confidence low — partial evidence, inferred mapping.",
+    evidence:{label:"Bundle evidence",gaps:["body not captured","inferred CWE-1000"],text:`GET /main.76a700c38298b5c8.js
+response: 200 OK (headers only)
+key found in bundle: 8EUK0p****************  (redacted)
+note: content-hash filename — re-templated to main.{hash}.js`}
+  },
+  roledata:{
+    id:"roledata", shape:"endpoint", title:"Role-access data exposed in client-side storage",
+    sevComputed:"high", sevLabel:"High", evrs:58, band:"Elevated",
+    loc:'<code>/auth/role-access/ → localStorage</code>',
+    source:{tool:"Mirror"}, confidence:"unvalidated",
+    cvss:[{src:"mirror",ver:"3.1",base:7.5,sel:true}], cvssSelRule:"single source",
+    up:["Authorisation data held in client-side storage","Tamperable to escalate privileges"],
+    down:["Client-side only — no server trust by default","Part of the same frontend rebuild"],
+    fp:{band:"needs-review",label:"Needs review",note:"Potential tier. Real only if server trusts client-side role data."},
+    seenBy:"1 scanner, 1 endpoint", sevNote:"Scanner High; computed High.",
+    why:"Scored 58: storing role data client-side is a design weakness, elevated if the server trusts it and benign if it doesn't. Scored in the elevated band pending confirmation of server-side trust.",
+    whySrc:"Severity from CVSS 7.5, conditioned on server trust (unconfirmed).",
+    evidence:{label:"Storage evidence",gaps:["server-trust unconfirmed"],text:`source: /auth/role-access/
+sink: localStorage['roleAccessData']
+risk: client-side authorisation tampering`}
+  },
+  cilium:{
+    id:"cilium", shape:"package", title:"Intermittent HTTP policy bypass in cilium",
+    sevComputed:"high", sevLabel:"High", evrs:61, band:"Elevated",
+    loc:'package <code>github.com/cilium/cilium</code> · installed <code>1.14.5</code>',
+    source:{tool:"Trivy"}, confidence:"unvalidated",
+    cvss:[{src:"bitnami",ver:"3.1",base:7.2,sel:true},{src:"ghsa",ver:"3.1",base:6.5,sel:false}],
+    cvssSelRule:"distro/vendor preferred, then max", disagree:"Sources disagree by 0.7 pts — severity contested",
+    up:["CVE-2024-28248, fixed upstream — published vulnerability","Network-exploitable policy bypass (AV:N)"],
+    down:["Fix available — upgrade to 1.14.8","Not internet-facing in current asset context","EPSS 0.4% — low exploitation probability"],
+    fp:{band:"deterministic",label:"Deterministic — real",note:"Installed 1.14.5 < fixed 1.14.8. Version math is exact: this applies."},
+    seenBy:"1 scanner, 1 image", sevNote:"Scanner High; computed High.",
+    why:"Scored 61: a published network-exploitable CVE with certain applicability, held below its 7.2 because a fix exists, it isn't internet-facing, and EPSS is 0.4%. The certainty is in applicability, not urgency.",
+    whySrc:"CVSS 7.2 (bitnami) over 6.5 (ghsa) per precedence. EPSS from feed. Applicability computed from version.",
+    evidence:{label:"Version / fix evidence",gaps:[],text:`package:   github.com/cilium/cilium
+installed:  1.14.5
+fixed:      1.13.13, 1.14.8, 1.15.2
+status:     fixed (applicable — installed < fixed)
+source:     GitHub Security Advisory (ghsa)`}
+  },
+  golang:{
+    id:"golang", shape:"package", title:"Go stdlib net/http request smuggling",
+    sevComputed:"med", sevLabel:"Medium", evrs:44, band:"Moderate",
+    loc:'package <code>stdlib</code> · installed <code>go1.21.4</code>',
+    source:{tool:"Trivy"}, confidence:"unvalidated",
+    cvss:[{src:"nvd",ver:"3.1",base:5.3,sel:true}], cvssSelRule:"NVD preferred",
+    up:["Published CVE in the Go standard library","Same image as cilium — retired by one rebuild"],
+    down:["Fix available in go1.21.5","Lower severity, not internet-facing","EPSS under 1%"],
+    fp:{band:"deterministic",label:"Deterministic — real",note:"go1.21.4 < fixed go1.21.5. Exact version match."},
+    seenBy:"1 scanner, 1 image", sevNote:"Scanner Medium; computed Medium.",
+    why:"Scored 44: a real but moderate stdlib CVE with a clean fix. It rides along with the cilium upgrade — the same image rebuild retires both, which is why it's grouped under one action.",
+    whySrc:"NVD 5.3. Applicability computed from version.",
+    evidence:{label:"Version evidence",gaps:[],text:`package: stdlib (Go)
+installed: go1.21.4
+fixed: go1.21.5
+status: fixed (applicable)`}
+  },
+  rdpmitm:{
+    id:"rdpmitm", shape:"host", title:"RDP server man-in-the-middle weakness",
+    sevComputed:"med", sevLabel:"Medium", evrs:48, band:"Moderate",
+    loc:'<code>10.31.112.29:3389/tcp</code> · <code>qa3app09</code> · Win Server 2008 R2',
+    source:{tool:"Nessus"}, confidence:"unvalidated",
+    cvss:[{src:"nessus",ver:"2.0",base:4.3,sel:true}], cvssSelRule:"only version available (v2)",
+    up:["CVE-2005-1794 — public exploit available (Nessus)","RDP exposed on a reachable internal host"],
+    down:["Legacy CVSS v2 only — no v3 vector","Internal host, not internet-facing","EOL OS — grouped for host-level remediation"],
+    fp:{band:"needs-review",label:"Needs range check",note:"Host shape: applicability depends on RDP/OS build in the affected range. Pending check."},
+    seenBy:"1 scanner, 1 host", sevNote:"Scanner and computed agree (Medium).",
+    why:"Scored 48: an old RDP weakness with a public exploit, lifted above its v2 base of 4.3 by the exploit signal but held in the moderate band by its internal, non-internet-facing position.",
+    whySrc:"CVSS v2 4.3 (no v3). Exploit signal from Nessus. Applicability pending range check.",
+    evidence:{label:"Plugin / host evidence",gaps:["version range not confirmed"],text:`plugin: 18405 — RDP MITM Weakness
+host: 10.31.112.29 (qa3app09)
+os: Windows Server 2008 R2 Standard
+port: 3389/tcp (msrdp)
+cve: CVE-2005-1794
+exploit: available`}
+  },
+  rdpnla:{
+    id:"rdpnla", shape:"host", title:"RDP not using Network Level Authentication",
+    sevComputed:"med", sevLabel:"Medium", evrs:40, band:"Moderate",
+    loc:'<code>10.31.112.29:3389/tcp</code> · <code>qa3app09</code>',
+    source:{tool:"Nessus"}, confidence:"unvalidated",
+    cvss:[{src:"nessus",ver:"2.0",base:4.3,sel:true}], cvssSelRule:"only version available (v2)",
+    up:["Pre-auth RDP exposure without NLA","Same host as the MITM weakness"],
+    down:["Mitigated entirely by the host upgrade","Internal host only"],
+    fp:{band:"needs-review",label:"Needs range check",note:"Config-level; verifiable on the host. Grouped with the EOL upgrade."},
+    seenBy:"1 scanner, 1 host", sevNote:"Scanner and computed agree (Medium).",
+    why:"Scored 40: a configuration weakness on the same EOL host. On its own it's a config change, but since the host is end-of-life, the upgrade that retires the MITM issue retires this too — hence one action.",
+    whySrc:"CVSS v2 4.3. Config-level, retired by host upgrade.",
+    evidence:{label:"Host evidence",gaps:[],text:`plugin: 58453 — RDP without NLA
+host: 10.31.112.29 (qa3app09)
+os: Windows Server 2008 R2 (EOL)
+fix: enable NLA — or retire host`}
+  },
+  eol:{
+    id:"eol", shape:"host", title:"End-of-life operating system (Server 2008 R2)",
+    sevComputed:"high", sevLabel:"High", evrs:64, band:"Elevated",
+    loc:'<code>qa3app09</code> · Windows Server 2008 R2',
+    source:{tool:"Nessus"}, confidence:"unvalidated",
+    cvss:[], cvssSelRule:"n/a — posture finding",
+    up:["OS past end of support — no security updates","Underlies both RDP findings on this host","Compounds every future CVE on this host"],
+    down:["Internal host, not internet-facing"],
+    fp:{band:"deterministic",label:"Deterministic — real",note:"OS build vs. support-end date is a fact. Not a false positive."},
+    seenBy:"1 scanner, 1 host", sevNote:"No CVSS — posture finding; computed from support status + role.",
+    why:"Scored 64: an EOL OS isn't a single CVE but a standing condition that makes every other finding on the host permanent. It's the root cause the whole action addresses, which is why decommissioning or upgrading retires the two RDP findings with it.",
+    whySrc:"No CVSS. Severity from support status and host role.",
+    evidence:{label:"Posture evidence",gaps:[],text:`host: qa3app09
+os: Windows Server 2008 R2 Standard
+support: ended 2020-01-14
+dependent findings: RDP MITM, RDP NLA`}
+  }
+};
+
+const ACTIONS = [
+  {
+    id:"A2", title:"Remediate the authentication flow of the QPay ERP API",
+    fixType:"Code + config", source:"Mirror",
+    findings:["sqli","cleartext","jfwhash"], riskRetired:94,
+    rationale:"All three sit on the same authentication flow of one ERP API. The injection and the forged-hash bypass share a root cause in how credentials are verified, and the cleartext-transport issue is on the same endpoints — so parameterising credential queries, enforcing TLS, and removing the client-trusted signing path is one coordinated change, not three tickets.",
+    steps:[
+      "Replace raw SQL credential checks with parameterised ORM authentication on /auth/login/.",
+      "Enforce HTTPS + HSTS across /auth/* and terminate TLS at the API tier.",
+      "Move request signing server-side so a client-held key can't forge /auth/authenticate (pairs with A1).",
+      "Add account lockout, then re-run the auth agents to confirm closure."
+    ]
+  },
+  {
+    id:"A1", title:"Rotate exposed secrets and rebuild the frontend bundle",
+    fixType:"Secret rotation + build", source:"Mirror",
+    findings:["hmac","roledata"], riskRetired:86,
+    rationale:"Both findings are secrets and authorisation data shipped inside the public frontend bundle. One rebuild that removes secrets from client code and rotates the exposed key addresses both — and it's a prerequisite for fully closing the forged-hash bypass in A2.",
+    steps:[
+      "Rotate the exposed HMAC signing key immediately — treat it as compromised.",
+      "Remove secrets and role-access data from client-side code and storage.",
+      "Rebuild and redeploy the bundle; confirm the key is no longer retrievable.",
+      "Coordinate with A2 so server-side signing lands in the same release."
+    ]
+  },
+  {
+    id:"A4", title:"Decommission or upgrade the end-of-life host qa3app09",
+    fixType:"Host upgrade", source:"Nessus",
+    findings:["eol","rdpmitm","rdpnla"], riskRetired:64,
+    rationale:"The two RDP findings are symptoms; the end-of-life OS is the root condition. Patching RDP on an unsupported host leaves it exposed to the next CVE with no fix available. Retiring or upgrading the host clears all three at once and stops the host generating new permanent findings.",
+    steps:[
+      "Confirm the RDP/OS build against the affected range (clears the two pending FP checks).",
+      "Plan migration of qa3app09 off Windows Server 2008 R2.",
+      "Decommission or rebuild on a supported OS with NLA enabled.",
+      "Rescan to confirm all three host findings are retired."
+    ]
+  },
+  {
+    id:"A3", title:"Upgrade the k-client image dependencies",
+    fixType:"Version bump", source:"Trivy",
+    findings:["cilium","golang"], riskRetired:61,
+    rationale:"Both CVEs are fixed-upstream dependencies in the same container image. A single image rebuild to the patched versions retires both with exact, version-verified certainty and no exploitation ambiguity — the cleanest action in the set.",
+    steps:[
+      "Bump github.com/cilium/cilium to 1.14.8 and Go to 1.21.5.",
+      "Rebuild the k-client image and regenerate the SBOM.",
+      "Redeploy; Trivy rescan confirms both CVEs cleared."
+    ]
+  }
+];
+
+const sevRank={crit:4,high:3,med:2,low:1};
+const $=s=>document.querySelector(s);
+const leftbody=$("#leftbody"), detail=$("#detail");
+let view="actions";
+let selAction="A2", selFinding=null, findingFilter="all";
+
+function sevdots(ids){
+  const sevs=ids.map(i=>F[i].sevComputed).sort((a,b)=>sevRank[b]-sevRank[a]);
+  return `<span class="sevdots">${sevs.map(s=>`<span class="dot ${s}"></span>`).join("")}</span>`;
+}
+function actionCard(a,i){
+  return `<div class="act" data-a="${a.id}" aria-selected="${a.id===selAction&&!selFinding}">
+    <div class="act-top">
+      <span class="rank">#${i+1}</span>
+      <span class="fixtype">${a.fixType}</span>
+      <span class="retire"><span class="big">${a.riskRetired}</span><span class="lbl">peak risk retired</span></span>
+    </div>
+    <h3>${a.title}</h3>
+    <div class="act-stats">
+      <span class="s">${sevdots(a.findings)} <b>${a.findings.length}</b> findings</span>
+      <span class="s"><b>${a.source}</b></span>
+    </div>
+  </div>`;
+}
+function renderActions(){
+  leftbody.innerHTML=`
+    <div class="insight">
+      <span class="k">REASONING LAYER</span>
+      <b>4 actions retire all 10 findings.</b> Grouped by shared root cause and shared fix, ranked by the risk each one removes — so work starts on the fix that retires the most, not the finding with the highest number.
+    </div>
+    <div class="queue-head"><h1>Remediation actions</h1><span class="count">· 4</span></div>
+    ${ACTIONS.map(actionCard).join("")}
+  `;
+  leftbody.querySelectorAll(".act").forEach(c=>c.onclick=()=>{selAction=c.dataset.a; selFinding=null; renderActions(); renderDetail();});
+}
+
+function findingCard(f){
+  return `<div class="card" data-id="${f.id}" aria-selected="${f.id===selFinding}">
+    <div class="card-top"><span class="sev ${f.sevComputed}">${f.sevLabel}</span><span class="tag shape">${f.shape}</span><span class="evrs">${f.evrs}</span></div>
+    <h3>${f.title}</h3>
+    <div class="card-meta"><span class="tag">${f.source.tool}</span><span class="conf ${f.confidence}">${f.confidence}</span><span class="fp ${f.fp.band}"><b>${f.fp.label}</b></span></div>
+  </div>`;
+}
+function renderFindings(){
+  const all=Object.values(F);
+  const items=all.filter(f=>findingFilter==="all"||f.shape===findingFilter);
+  const c={host:0,package:0,endpoint:0}; all.forEach(f=>c[f.shape]++);
+  leftbody.innerHTML=`
+    <div class="queue-head"><h1>All findings</h1><span class="count">· ${items.length}</span></div>
+    <div class="filters">
+      <span class="chip" data-f="all" aria-pressed="${findingFilter==='all'}">All</span>
+      <span class="chip" data-f="host" aria-pressed="${findingFilter==='host'}">Host<span class="n">${c.host}</span></span>
+      <span class="chip" data-f="package" aria-pressed="${findingFilter==='package'}">Package<span class="n">${c.package}</span></span>
+      <span class="chip" data-f="endpoint" aria-pressed="${findingFilter==='endpoint'}">Endpoint<span class="n">${c.endpoint}</span></span>
+    </div>
+    ${items.map(findingCard).join("")}
+  `;
+  leftbody.querySelectorAll(".chip").forEach(ch=>ch.onclick=()=>{findingFilter=ch.dataset.f; renderFindings();});
+  leftbody.querySelectorAll(".card").forEach(c=>c.onclick=()=>{selFinding=c.dataset.id; renderFindings(); renderDetail();});
+}
+
+function renderLeft(){ view==="actions"?renderActions():renderFindings(); }
+
+function factorHTML(t,dir){return `<div class="factor ${dir}"><span class="mk">${dir==="up"?"↑":"↓"}</span><span>${t}</span></div>`;}
+
+function findingDetail(f, fromAction){
+  const back = fromAction ? `<div class="back" id="backBtn">← back to action</div>` : "";
+  return `
+    ${back}
+    <div class="d-head">
+      <span class="sev ${f.sevComputed}">${f.sevLabel}</span>
+      <div style="min-width:0"><h2 class="d-title">${f.title}</h2><p class="d-loc">${f.loc}</p></div>
+    </div>
+    <div class="grid2">
+      <div class="block">
+        <h4>Risk-increasing factors</h4>${f.up.map(t=>factorHTML(t,"up")).join("")}
+        <div class="hr"></div><h4>Risk-decreasing factors</h4>${f.down.map(t=>factorHTML(t,"down")).join("")}
+      </div>
+      <div>
+        <div class="block"><div class="score-wrap">
+          <div class="score" style="color:var(--${f.sevComputed})">${f.evrs}</div>
+          <div class="score-band">${f.band} · score 0–100</div>
+          <div class="meter"><span class="pin" style="left:${f.evrs}%"></span></div>
+        </div></div>
+        <div class="mini"><div class="lbl">False-positive assessment</div><div class="val">${f.fp.label}</div><div class="note">${f.fp.note}</div></div>
+        <div class="mini"><div class="lbl">CVSS (${f.cvssSelRule})</div>
+          <div class="cvss-row">${f.cvss.length?f.cvss.map(c=>`<span class="cvss-pill ${c.sel?'sel':''}">${c.src} ${c.base} <span style="opacity:.6">v${c.ver}</span></span>`).join(""):'<span class="note">No CVSS — posture finding</span>'}</div>
+          ${f.disagree?`<div class="disagree">⚠ ${f.disagree}</div>`:""}
+        </div>
+        <div class="mini"><div class="lbl">Correlation</div><div class="val">${f.seenBy}</div><div class="note">Confidence: ${f.confidence} · ${f.sevNote}</div></div>
+      </div>
+    </div>
+    <div class="why"><h4>Why this rating</h4><p>${f.why}</p><div class="src">${f.whySrc}</div></div>
+    <details class="evbox"><summary>${f.evidence.label}</summary><pre>${f.evidence.text}</pre>
+      ${f.evidence.gaps.length?`<div style="padding:0 15px 14px">${f.evidence.gaps.map(g=>`<span class="gap">gap: ${g}</span>`).join(" ")}</div>`:""}
+    </details>`;
+}
+
+function actionDetail(a){
+  return `
+    <div class="d-head">
+      <span class="fixtype" style="margin-top:2px">${a.fixType}</span>
+      <div style="min-width:0"><h2 class="d-title">${a.title}</h2>
+      <p class="d-loc">retires <b>${a.findings.length}</b> findings · peak risk retired <b>${a.riskRetired}</b> · source ${a.source}</p></div>
+    </div>
+    <div class="why" style="margin-top:18px"><h4>Why these are one action</h4><p>${a.rationale}</p></div>
+    <div class="block" style="margin-top:16px"><h4>Remediation</h4><ol class="steps">${a.steps.map(s=>`<li>${s}</li>`).join("")}</ol></div>
+    <div class="retires-head"><h4>Findings retired by this action</h4></div>
+    <div id="retlist">${a.findings.map(id=>findingCard(F[id])).join("")}</div>`;
+}
+
+function renderDetail(){
+  if(selFinding){
+    const fromAction = view==="actions";
+    detail.innerHTML=findingDetail(F[selFinding], fromAction);
+    const b=$("#backBtn"); if(b) b.onclick=()=>{selFinding=null; renderDetail(); renderLeft();};
+  } else {
+    detail.innerHTML=actionDetail(ACTIONS.find(a=>a.id===selAction));
+    detail.querySelectorAll("#retlist .card").forEach(c=>c.onclick=()=>{selFinding=c.dataset.id; renderDetail();});
+  }
+}
+
+$(".viewtabs").querySelectorAll("button").forEach(b=>{
+  b.onclick=()=>{
+    view=b.dataset.v;
+    $(".viewtabs").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed", x===b));
+    selFinding = view==="findings" ? Object.keys(F)[0] : null;
+    renderLeft(); renderDetail();
+  };
+});
+
+const tb=$("#themeBtn");
+try{const s=localStorage.getItem("vmp-theme"); if(s)document.documentElement.setAttribute("data-theme",s);}catch(e){}
+tb.onclick=()=>{const cur=document.documentElement.getAttribute("data-theme");const n=cur==="dark"?"light":"dark";document.documentElement.setAttribute("data-theme",n);try{localStorage.setItem("vmp-theme",n);}catch(e){}};
+
+renderLeft(); renderDetail();
+</script>
+</body>
+</html>
