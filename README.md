@@ -24,6 +24,19 @@ Agents gather and classify evidence; **deterministic code computes the score**; 
 
 In: ingest → normalize → dedupe → correlate → enrich → score → assess-FP → cluster → explain → report, plus three screens and an own host-level asset inventory. Out: POA&M, owner routing, SSO/RBAC, ticketing. False-positive performance is measured on a constructed benchmark until customer scanner data with analyst dispositions is available.
 
+## Development
+
+Requires [uv](https://docs.astral.sh/uv/); it installs Python 3.12 and the locked dependencies.
+
+```
+uv sync                                       # create .venv from uv.lock
+uv run pytest                                 # tests
+uv run ruff check; uv run mypy src scripts    # lint + strict types
+uv run python scripts/export_json_schema.py   # regenerate schema/json/ for the UI
+```
+
+Code lives in `src/vmp/<module>` following the module layout in `BUILD_SPEC.md`. The canonical model is `src/vmp/schema/`.
+
 ## Open items tracked outside this repo
 
 - Masked Mirror JSON feed (the PDF shared so far is a rendered report, not ingestable data).

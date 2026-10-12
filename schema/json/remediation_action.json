@@ -1,0 +1,129 @@
+{
+  "$defs": {
+    "FixType": {
+      "enum": [
+        "version_bump",
+        "patch",
+        "config_change",
+        "code_change",
+        "secret_rotation",
+        "rebuild",
+        "host_upgrade",
+        "decommission"
+      ],
+      "title": "FixType",
+      "type": "string"
+    },
+    "SharedBasis": {
+      "additionalProperties": false,
+      "description": "A checkable claim about what the findings share, e.g. kind=host, value=qa3app09.",
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/SharedBasisKind"
+        },
+        "value": {
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "value"
+      ],
+      "title": "SharedBasis",
+      "type": "object"
+    },
+    "SharedBasisKind": {
+      "description": "What a remediation action's findings have in common. Code checks this claim.",
+      "enum": [
+        "host",
+        "image",
+        "route",
+        "application",
+        "package"
+      ],
+      "title": "SharedBasisKind",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "action_id": {
+      "pattern": "^act_[A-Za-z0-9_-]+$",
+      "title": "Action Id",
+      "type": "string"
+    },
+    "depends_on": {
+      "default": [],
+      "items": {
+        "pattern": "^act_[A-Za-z0-9_-]+$",
+        "type": "string"
+      },
+      "title": "Depends On",
+      "type": "array"
+    },
+    "finding_ids": {
+      "items": {
+        "pattern": "^fnd_[A-Za-z0-9]+$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Finding Ids",
+      "type": "array"
+    },
+    "fix_types": {
+      "items": {
+        "$ref": "#/$defs/FixType"
+      },
+      "minItems": 1,
+      "title": "Fix Types",
+      "type": "array"
+    },
+    "rationale": {
+      "minLength": 1,
+      "title": "Rationale",
+      "type": "string"
+    },
+    "risk_retired": {
+      "maximum": 100,
+      "minimum": 0,
+      "title": "Risk Retired",
+      "type": "integer"
+    },
+    "shared_basis": {
+      "items": {
+        "$ref": "#/$defs/SharedBasis"
+      },
+      "minItems": 1,
+      "title": "Shared Basis",
+      "type": "array"
+    },
+    "steps": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Steps",
+      "type": "array"
+    },
+    "title": {
+      "minLength": 1,
+      "title": "Title",
+      "type": "string"
+    }
+  },
+  "required": [
+    "action_id",
+    "title",
+    "fix_types",
+    "finding_ids",
+    "shared_basis",
+    "risk_retired",
+    "rationale",
+    "steps"
+  ],
+  "title": "RemediationAction",
+  "type": "object"
+}

@@ -1,0 +1,58 @@
+{
+  "$defs": {
+    "IngestBatch": {
+      "additionalProperties": false,
+      "properties": {
+        "batch_id": {
+          "minLength": 1,
+          "title": "Batch Id",
+          "type": "string"
+        },
+        "received_at": {
+          "format": "date-time",
+          "title": "Received At",
+          "type": "string"
+        },
+        "source_tool": {
+          "minLength": 1,
+          "title": "Source Tool",
+          "type": "string"
+        }
+      },
+      "required": [
+        "batch_id",
+        "source_tool",
+        "received_at"
+      ],
+      "title": "IngestBatch",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "The ingest envelope. Findings are parsed one by one so one bad record can't hide others.",
+  "properties": {
+    "findings": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Findings",
+      "type": "array"
+    },
+    "ingest_batch": {
+      "$ref": "#/$defs/IngestBatch"
+    },
+    "schema_version": {
+      "const": "0.1",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "ingest_batch",
+    "findings"
+  ],
+  "title": "FindingBatch",
+  "type": "object"
+}

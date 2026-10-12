@@ -1,0 +1,75 @@
+{
+  "$defs": {
+    "FPBand": {
+      "enum": [
+        "confirmed_applicable",
+        "confirmed_not_applicable",
+        "low_likelihood",
+        "needs_review",
+        "likely_false_positive"
+      ],
+      "title": "FPBand",
+      "type": "string"
+    },
+    "FPMechanism": {
+      "description": "False-positive logic is selected by locus type, never shared across shapes.",
+      "enum": [
+        "version_range",
+        "deterministic_version",
+        "confidence_reachability"
+      ],
+      "title": "FPMechanism",
+      "type": "string"
+    },
+    "LocusType": {
+      "enum": [
+        "host",
+        "package",
+        "endpoint"
+      ],
+      "title": "LocusType",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "False-positive likelihood. Flags only: nothing here suppresses a finding.",
+  "properties": {
+    "band": {
+      "$ref": "#/$defs/FPBand"
+    },
+    "facts": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Facts",
+      "type": "array"
+    },
+    "finding_id": {
+      "pattern": "^fnd_[A-Za-z0-9]+$",
+      "title": "Finding Id",
+      "type": "string"
+    },
+    "locus_type": {
+      "$ref": "#/$defs/LocusType"
+    },
+    "mechanism": {
+      "$ref": "#/$defs/FPMechanism"
+    },
+    "rationale": {
+      "minLength": 1,
+      "title": "Rationale",
+      "type": "string"
+    }
+  },
+  "required": [
+    "finding_id",
+    "locus_type",
+    "mechanism",
+    "band",
+    "rationale"
+  ],
+  "title": "FPAssessment",
+  "type": "object"
+}

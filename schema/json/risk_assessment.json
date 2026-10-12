@@ -1,0 +1,202 @@
+{
+  "$defs": {
+    "Factor": {
+      "additionalProperties": false,
+      "description": "One named input to the score. Every score is explained by its factors.",
+      "properties": {
+        "contribution": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "title": "Contribution"
+        },
+        "direction": {
+          "$ref": "#/$defs/FactorDirection"
+        },
+        "evidence_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidence Ref"
+        },
+        "name": {
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Name",
+          "type": "string"
+        },
+        "observed": {
+          "minLength": 1,
+          "title": "Observed",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/FactorSource"
+        },
+        "weight": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "title": "Weight"
+        }
+      },
+      "required": [
+        "name",
+        "direction",
+        "observed",
+        "weight",
+        "contribution",
+        "source"
+      ],
+      "title": "Factor",
+      "type": "object"
+    },
+    "FactorDirection": {
+      "enum": [
+        "up",
+        "down"
+      ],
+      "title": "FactorDirection",
+      "type": "string"
+    },
+    "FactorSource": {
+      "description": "Where a factor's value came from. 'agent' values are evidence, never the score.",
+      "enum": [
+        "tool",
+        "intel",
+        "inventory",
+        "agent",
+        "rule"
+      ],
+      "title": "FactorSource",
+      "type": "string"
+    },
+    "NormalisedSeverity": {
+      "enum": [
+        "info",
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "title": "NormalisedSeverity",
+      "type": "string"
+    },
+    "ScoreBand": {
+      "enum": [
+        "low",
+        "moderate",
+        "elevated",
+        "very_high"
+      ],
+      "title": "ScoreBand",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Output of the deterministic scoring engine. Never produced by a model.",
+  "properties": {
+    "assessed_at": {
+      "format": "date-time",
+      "title": "Assessed At",
+      "type": "string"
+    },
+    "band": {
+      "$ref": "#/$defs/ScoreBand"
+    },
+    "computed_severity": {
+      "$ref": "#/$defs/NormalisedSeverity"
+    },
+    "engine_version": {
+      "minLength": 1,
+      "title": "Engine Version",
+      "type": "string"
+    },
+    "factors": {
+      "items": {
+        "$ref": "#/$defs/Factor"
+      },
+      "minItems": 1,
+      "title": "Factors",
+      "type": "array"
+    },
+    "intel_snapshot_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Intel Snapshot Id"
+    },
+    "score": {
+      "maximum": 100,
+      "minimum": 0,
+      "title": "Score",
+      "type": "integer"
+    },
+    "severity_delta_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Severity Delta Reason"
+    },
+    "source_severity": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/NormalisedSeverity"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "vulnerability_id": {
+      "pattern": "^vln_[A-Za-z0-9_.-]+$",
+      "title": "Vulnerability Id",
+      "type": "string"
+    },
+    "weights_version": {
+      "minLength": 1,
+      "title": "Weights Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "vulnerability_id",
+    "score",
+    "band",
+    "computed_severity",
+    "factors",
+    "weights_version",
+    "engine_version",
+    "assessed_at"
+  ],
+  "title": "RiskAssessment",
+  "type": "object"
+}

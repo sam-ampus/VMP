@@ -1,0 +1,840 @@
+{
+  "$defs": {
+    "Classification": {
+      "additionalProperties": false,
+      "properties": {
+        "cve": {
+          "default": [],
+          "items": {
+            "pattern": "^CVE-\\d{4}-\\d{4,}$",
+            "type": "string"
+          },
+          "title": "Cve",
+          "type": "array"
+        },
+        "cwe": {
+          "default": [],
+          "items": {
+            "pattern": "^CWE-\\d+$",
+            "type": "string"
+          },
+          "title": "Cwe",
+          "type": "array"
+        },
+        "inferred_mappings": {
+          "default": [],
+          "items": {
+            "enum": [
+              "cve",
+              "cwe",
+              "owasp"
+            ],
+            "type": "string"
+          },
+          "title": "Inferred Mappings",
+          "type": "array"
+        },
+        "owasp": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Owasp"
+        },
+        "source_severity": {
+          "$ref": "#/$defs/NormalisedSeverity"
+        },
+        "source_severity_raw": {
+          "minLength": 1,
+          "title": "Source Severity Raw",
+          "type": "string"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "source_severity",
+        "source_severity_raw"
+      ],
+      "title": "Classification",
+      "type": "object"
+    },
+    "Confidence": {
+      "description": "How far a finding was validated. Mirror's four tiers, plus the scanner default.",
+      "enum": [
+        "confirmed",
+        "likely",
+        "potential",
+        "untested",
+        "unvalidated"
+      ],
+      "title": "Confidence",
+      "type": "string"
+    },
+    "ConfidenceSource": {
+      "enum": [
+        "tool_asserted",
+        "default_for_tool_class",
+        "analyst"
+      ],
+      "title": "ConfidenceSource",
+      "type": "string"
+    },
+    "CvssScore": {
+      "additionalProperties": false,
+      "properties": {
+        "base": {
+          "anyOf": [
+            {
+              "maximum": 10.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "title": "Base"
+        },
+        "source": {
+          "pattern": "^[a-z0-9][a-z0-9_.-]*$",
+          "title": "Source",
+          "type": "string"
+        },
+        "vector": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vector"
+        },
+        "version": {
+          "$ref": "#/$defs/CvssVersion"
+        }
+      },
+      "required": [
+        "source",
+        "version",
+        "base"
+      ],
+      "title": "CvssScore",
+      "type": "object"
+    },
+    "CvssSelected": {
+      "additionalProperties": false,
+      "description": "The chosen score and the rule that chose it. Without the rule, not reproducible.",
+      "properties": {
+        "base": {
+          "anyOf": [
+            {
+              "maximum": 10.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "title": "Base"
+        },
+        "rule": {
+          "$ref": "#/$defs/CvssSelectionRule"
+        },
+        "source": {
+          "pattern": "^[a-z0-9][a-z0-9_.-]*$",
+          "title": "Source",
+          "type": "string"
+        },
+        "version": {
+          "$ref": "#/$defs/CvssVersion"
+        }
+      },
+      "required": [
+        "source",
+        "version",
+        "base",
+        "rule"
+      ],
+      "title": "CvssSelected",
+      "type": "object"
+    },
+    "CvssSelectionRule": {
+      "description": "Which precedence tier chose the CVSS value (locked decision 1).\n\nOS packages: distro first. Otherwise: NVD, then the issuing CNA, then the tool.",
+      "enum": [
+        "distro",
+        "nvd",
+        "cna",
+        "tool"
+      ],
+      "title": "CvssSelectionRule",
+      "type": "string"
+    },
+    "CvssVersion": {
+      "enum": [
+        "2.0",
+        "3.0",
+        "3.1",
+        "4.0"
+      ],
+      "title": "CvssVersion",
+      "type": "string"
+    },
+    "EndpointLocus": {
+      "additionalProperties": false,
+      "properties": {
+        "asset_ref": {
+          "minLength": 1,
+          "title": "Asset Ref",
+          "type": "string"
+        },
+        "method": {
+          "$ref": "#/$defs/HttpMethod"
+        },
+        "parameter_location": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ParameterLocation"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "parameter_raw": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parameter Raw"
+        },
+        "parameters": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Parameters",
+          "type": "array"
+        },
+        "type": {
+          "const": "endpoint",
+          "title": "Type",
+          "type": "string"
+        },
+        "url": {
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "asset_ref",
+        "url",
+        "method"
+      ],
+      "title": "EndpointLocus",
+      "type": "object"
+    },
+    "Evidence": {
+      "additionalProperties": true,
+      "description": "Raw evidence. The one open record: each tool emits different evidence fields.",
+      "properties": {
+        "references": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "References",
+          "type": "array"
+        }
+      },
+      "title": "Evidence",
+      "type": "object"
+    },
+    "EvidenceCompleteness": {
+      "enum": [
+        "full",
+        "partial",
+        "none"
+      ],
+      "title": "EvidenceCompleteness",
+      "type": "string"
+    },
+    "ExploitSignals": {
+      "additionalProperties": false,
+      "properties": {
+        "exploit_available": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exploit Available"
+        },
+        "exploitability_ease": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exploitability Ease"
+        },
+        "signal_source": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z0-9][a-z0-9_.-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signal Source"
+        }
+      },
+      "title": "ExploitSignals",
+      "type": "object"
+    },
+    "FixStatus": {
+      "description": "Trivy's vocabulary, which is the most complete of the package scanners.",
+      "enum": [
+        "fixed",
+        "affected",
+        "will_not_fix",
+        "fix_deferred",
+        "end_of_life",
+        "not_affected",
+        "unknown"
+      ],
+      "title": "FixStatus",
+      "type": "string"
+    },
+    "HostLocus": {
+      "additionalProperties": false,
+      "properties": {
+        "asset_ref": {
+          "minLength": 1,
+          "title": "Asset Ref",
+          "type": "string"
+        },
+        "cpe": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Cpe",
+          "type": "array"
+        },
+        "hostname": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hostname"
+        },
+        "ip": {
+          "format": "ipvanyaddress",
+          "title": "Ip",
+          "type": "string"
+        },
+        "os": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Os"
+        },
+        "port": {
+          "anyOf": [
+            {
+              "maximum": 65535,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Port"
+        },
+        "protocol": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Protocol"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "service": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Service"
+        },
+        "type": {
+          "const": "host",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "asset_ref",
+        "ip"
+      ],
+      "title": "HostLocus",
+      "type": "object"
+    },
+    "HttpMethod": {
+      "enum": [
+        "GET",
+        "POST",
+        "PUT",
+        "PATCH",
+        "DELETE",
+        "HEAD",
+        "OPTIONS"
+      ],
+      "title": "HttpMethod",
+      "type": "string"
+    },
+    "NormalisedSeverity": {
+      "enum": [
+        "info",
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "title": "NormalisedSeverity",
+      "type": "string"
+    },
+    "PackageLocus": {
+      "additionalProperties": false,
+      "properties": {
+        "asset_ref": {
+          "minLength": 1,
+          "title": "Asset Ref",
+          "type": "string"
+        },
+        "fix_status": {
+          "$ref": "#/$defs/FixStatus"
+        },
+        "fixed_version": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Fixed Version",
+          "type": "array"
+        },
+        "installed_version": {
+          "minLength": 1,
+          "title": "Installed Version",
+          "type": "string"
+        },
+        "package_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Package Id"
+        },
+        "package_name": {
+          "minLength": 1,
+          "title": "Package Name",
+          "type": "string"
+        },
+        "purl": {
+          "pattern": "^pkg:[a-z0-9.+-]+/.+",
+          "title": "Purl",
+          "type": "string"
+        },
+        "type": {
+          "const": "package",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "asset_ref",
+        "package_name",
+        "purl",
+        "installed_version",
+        "fix_status"
+      ],
+      "title": "PackageLocus",
+      "type": "object"
+    },
+    "ParameterLocation": {
+      "enum": [
+        "query",
+        "body",
+        "path",
+        "header",
+        "cookie"
+      ],
+      "title": "ParameterLocation",
+      "type": "string"
+    },
+    "Protocol": {
+      "enum": [
+        "tcp",
+        "udp",
+        "icmp"
+      ],
+      "title": "Protocol",
+      "type": "string"
+    },
+    "RemediationSource": {
+      "additionalProperties": false,
+      "properties": {
+        "provided_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provided By"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        }
+      },
+      "title": "RemediationSource",
+      "type": "object"
+    },
+    "ScanType": {
+      "enum": [
+        "authenticated_network",
+        "unauthenticated_network",
+        "sca",
+        "container_image",
+        "dast",
+        "dast_agentic",
+        "sast",
+        "unknown"
+      ],
+      "title": "ScanType",
+      "type": "string"
+    },
+    "Scores": {
+      "additionalProperties": false,
+      "properties": {
+        "cvss": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/CvssScore"
+          },
+          "title": "Cvss",
+          "type": "array"
+        },
+        "cvss_selected": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CvssSelected"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "epss": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Epss"
+        },
+        "kev": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Kev"
+        }
+      },
+      "title": "Scores",
+      "type": "object"
+    },
+    "Source": {
+      "additionalProperties": false,
+      "description": "Which tool saw it, in which scan, and the detection window as the tool reported it.",
+      "properties": {
+        "first_detected": {
+          "format": "date-time",
+          "title": "First Detected",
+          "type": "string"
+        },
+        "last_detected": {
+          "format": "date-time",
+          "title": "Last Detected",
+          "type": "string"
+        },
+        "native_family": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Native Family"
+        },
+        "native_id": {
+          "minLength": 1,
+          "title": "Native Id",
+          "type": "string"
+        },
+        "scan_id": {
+          "minLength": 1,
+          "title": "Scan Id",
+          "type": "string"
+        },
+        "scan_type": {
+          "$ref": "#/$defs/ScanType"
+        },
+        "times_detected": {
+          "default": 1,
+          "exclusiveMinimum": 0,
+          "title": "Times Detected",
+          "type": "integer"
+        },
+        "tool": {
+          "pattern": "^[a-z0-9][a-z0-9_.-]*$",
+          "title": "Tool",
+          "type": "string"
+        },
+        "tool_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tool Version"
+        }
+      },
+      "required": [
+        "tool",
+        "native_id",
+        "scan_id",
+        "scan_type",
+        "first_detected",
+        "last_detected"
+      ],
+      "title": "Source",
+      "type": "object"
+    },
+    "ValidationStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "confidence": {
+          "$ref": "#/$defs/Confidence",
+          "default": "unvalidated"
+        },
+        "confidence_source": {
+          "$ref": "#/$defs/ConfidenceSource"
+        },
+        "evidence_completeness": {
+          "$ref": "#/$defs/EvidenceCompleteness"
+        },
+        "evidence_gaps": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Evidence Gaps",
+          "type": "array"
+        },
+        "reproduced": {
+          "default": false,
+          "title": "Reproduced",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "confidence_source",
+        "evidence_completeness"
+      ],
+      "title": "ValidationStatus",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "classification": {
+      "$ref": "#/$defs/Classification"
+    },
+    "evidence": {
+      "$ref": "#/$defs/Evidence",
+      "default": {
+        "references": []
+      }
+    },
+    "exploit_signals": {
+      "$ref": "#/$defs/ExploitSignals",
+      "default": {
+        "exploit_available": null,
+        "exploitability_ease": null,
+        "signal_source": null
+      }
+    },
+    "finding_id": {
+      "pattern": "^fnd_[A-Za-z0-9]+$",
+      "title": "Finding Id",
+      "type": "string"
+    },
+    "idempotency_key": {
+      "minLength": 1,
+      "title": "Idempotency Key",
+      "type": "string"
+    },
+    "locus": {
+      "discriminator": {
+        "mapping": {
+          "endpoint": "#/$defs/EndpointLocus",
+          "host": "#/$defs/HostLocus",
+          "package": "#/$defs/PackageLocus"
+        },
+        "propertyName": "type"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/HostLocus"
+        },
+        {
+          "$ref": "#/$defs/PackageLocus"
+        },
+        {
+          "$ref": "#/$defs/EndpointLocus"
+        }
+      ],
+      "title": "Locus"
+    },
+    "remediation_source": {
+      "$ref": "#/$defs/RemediationSource",
+      "default": {
+        "provided_by": null,
+        "text": null
+      }
+    },
+    "scores": {
+      "$ref": "#/$defs/Scores",
+      "default": {
+        "cvss": [],
+        "cvss_selected": null,
+        "epss": null,
+        "kev": null
+      }
+    },
+    "source": {
+      "$ref": "#/$defs/Source"
+    },
+    "validation": {
+      "$ref": "#/$defs/ValidationStatus"
+    }
+  },
+  "required": [
+    "finding_id",
+    "idempotency_key",
+    "source",
+    "locus",
+    "classification",
+    "validation"
+  ],
+  "title": "Finding",
+  "type": "object"
+}
