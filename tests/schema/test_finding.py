@@ -9,7 +9,7 @@ import pytest
 from pydantic import ValidationError
 
 from vmp.schema import EndpointLocus, Finding, HostLocus, PackageLocus
-from vmp.schema.enums import CvssSelectionRule, NormalisedSeverity
+from vmp.schema.enums import NormalisedSeverity
 
 
 def test_three_shapes_route_to_their_locus_type(
@@ -34,17 +34,16 @@ def test_values_are_normalised_but_raw_is_kept(package: dict[str, Any]) -> None:
     assert f.classification.source_severity_raw == "HIGH"
 
 
-def test_cvss_is_decimal_and_selection_records_its_rule(package: dict[str, Any]) -> None:
+def test_cvss_is_exact_decimal(package: dict[str, Any]) -> None:
     scores = Finding.model_validate(package).scores
-    assert scores.cvss_selected is not None
-    assert scores.cvss_selected.base == Decimal("6.5")
-    assert scores.cvss_selected.rule is CvssSelectionRule.CNA
-    assert scores.cvss_spread() == Decimal("0.7")  # below the 2.0 'contested' threshold
+    assert [c.base for c in scores.cvss] == [Decimal("7.2"), Decimal("6.5")]
 
 
-def test_spread_ignores_other_cvss_versions(host: dict[str, Any]) -> None:
-    host["scores"]["cvss"].append({"source": "nvd", "version": "3.1", "base": 9.0})
-    assert Finding.model_validate(host).scores.cvss_spread() is None
+def test_findings_never_carry_a_selected_cvss(package: dict[str, Any]) -> None:
+    """Selection needs enrichment, so it happens after ingest, never on the Finding."""
+    package["scores"]["cvss_selected"] = {"source": "ghsa", "version": "3.1", "base": 6.5}
+    with pytest.raises(ValidationError, match="Extra inputs"):
+        Finding.model_validate(package)
 
 
 def test_endpoint_method_is_uppercased(endpoint: dict[str, Any]) -> None:
@@ -95,8 +94,6 @@ RULES: list[tuple[str, str, Mutation, str]] = [
      _set("source.last_detected", "2013-07-01T11:40:48"), "timezone"),
     ("fixed needs fixed_version", "package",
      _set("locus.fixed_version", []), "fixed_version is empty"),
-    ("selected must be stored", "package",
-     _set("scores.cvss_selected.base", 7.0), "does not match any entry"),
     ("partial evidence names its gaps", "endpoint",
      _set("validation.evidence_gaps", []), "does not say what is missing"),
     ("full evidence has no gaps", "host",

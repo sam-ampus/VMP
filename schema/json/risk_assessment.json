@@ -147,6 +147,20 @@
       "default": null,
       "title": "Intel Snapshot Id"
     },
+    "missing_inputs": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Missing Inputs",
+      "type": "array"
+    },
+    "peak_finding_id": {
+      "pattern": "^fnd_[A-Za-z0-9]+$",
+      "title": "Peak Finding Id",
+      "type": "string"
+    },
     "score": {
       "maximum": 100,
       "minimum": 0,
@@ -189,6 +203,7 @@
   },
   "required": [
     "vulnerability_id",
+    "peak_finding_id",
     "score",
     "band",
     "computed_severity",

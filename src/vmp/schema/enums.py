@@ -105,6 +105,14 @@ class CvssSelectionRule(StrEnum):
     TOOL = "tool"
 
 
+class CvssSourceKind(StrEnum):
+    """Who scored a CVE, for locked decision 1's precedence: NVD, then the issuing CNA."""
+
+    NVD = "nvd"
+    CNA = "cna"
+    OTHER = "other"  # e.g. CISA ADP
+
+
 class ClosureReason(StrEnum):
     FIXED = "fixed"
     FALSE_POSITIVE = "false_positive"
@@ -114,6 +122,18 @@ class ClosureReason(StrEnum):
 class VulnerabilityStatus(StrEnum):
     OPEN = "open"
     CLOSED = "closed"
+
+
+class AssetCriticality(StrEnum):
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
+    CRITICAL = "critical"
+
+
+class Environment(StrEnum):
+    PRODUCTION = "production"
+    NON_PRODUCTION = "non_production"
 
 
 class ScoreBand(StrEnum):

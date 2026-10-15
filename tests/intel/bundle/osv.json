@@ -1,0 +1,21 @@
+{
+  "pkg:golang/github.com/cilium/cilium@1.14.5": {
+    "vulns": [
+      {
+        "id": "GHSA-68mj-9pjq-mc85",
+        "aliases": ["CVE-2024-28248"],
+        "modified": "2024-03-19T00:00:00Z",
+        "affected": [
+          {
+            "package": { "ecosystem": "Go", "name": "github.com/cilium/cilium", "purl": "pkg:golang/github.com/cilium/cilium" },
+            "ranges": [
+              { "type": "SEMVER", "events": [{ "introduced": "1.13.0" }, { "fixed": "1.13.13" }] },
+              { "type": "SEMVER", "events": [{ "introduced": "1.14.0" }, { "fixed": "1.14.8" }] },
+              { "type": "SEMVER", "events": [{ "introduced": "1.15.0" }, { "fixed": "1.15.2" }] }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

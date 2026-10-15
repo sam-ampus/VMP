@@ -1,0 +1,385 @@
+{
+  "weights_version": "w-0.1",
+  "about": "Hand-computed scoring vectors. score = clamp(0..100, round_half_up(sum of factor contributions)). The base factor (cvss_base or severity_fallback) is always listed; other factors only when they contribute non-zero points. Each case's input is merged over 'defaults'.",
+  "defaults": {
+    "cvss_base": null,
+    "source_severity": "high",
+    "has_cve": true,
+    "kev": false,
+    "epss": null,
+    "exploit_available": null,
+    "internet_facing": null,
+    "asset_criticality": null,
+    "environment": null,
+    "confidence": "unvalidated",
+    "evidence_completeness": "full"
+  },
+  "cases": [
+    {
+      "id": "base_cvss_9_8",
+      "why": "CVSS alone tops out at high: critical needs threat or exposure evidence on top.",
+      "input": { "cvss_base": "9.8", "source_severity": "critical" },
+      "expected": { "score": 59, "severity": "high", "band": "elevated",
+        "factors": { "cvss_base": "58.8" },
+        "missing_inputs": ["asset_criticality", "environment", "epss", "internet_facing"] }
+    },
+    {
+      "id": "base_cvss_zero",
+      "why": "Base factor is listed even when it contributes nothing, so every score has a factor.",
+      "input": { "cvss_base": "0.0", "source_severity": "info" },
+      "expected": { "score": 0, "severity": "info", "band": "low",
+        "factors": { "cvss_base": "0.0" },
+        "missing_inputs": ["asset_criticality", "environment", "epss", "internet_facing"] }
+    },
+    {
+      "id": "base_cvss_10",
+      "why": "Maximum CVSS is 60 points.",
+      "input": { "cvss_base": "10.0", "source_severity": "critical" },
+      "expected": { "score": 60, "severity": "high", "band": "elevated",
+        "factors": { "cvss_base": "60.0" },
+        "missing_inputs": ["asset_criticality", "environment", "epss", "internet_facing"] }
+    },
+    {
+      "id": "rounding_up",
+      "why": "45.6 rounds to 46.",
+      "input": { "cvss_base": "7.6" },
+      "expected": { "score": 46, "severity": "medium", "band": "moderate",
+        "factors": { "cvss_base": "45.6" },
+        "missing_inputs": ["asset_criticality", "environment", "epss", "internet_facing"] }
+    },
+    {
+      "id": "rounding_down",
+      "why": "44.4 rounds to 44.",
+      "input": { "cvss_base": "7.4" },
+      "expected": { "score": 44, "severity": "medium", "band": "moderate",
+        "factors": { "cvss_base": "44.4" },
+        "missing_inputs": ["asset_criticality", "environment", "epss", "internet_facing"] }
+    },
+    {
+      "id": "fallback_high_no_cve",
+      "why": "No CVSS and no CVE: source severity sets the base. KEV/EPSS are not applicable, so not missing.",
+      "input": { "has_cve": false },
+      "expected": { "score": 45, "severity": "medium", "band": "moderate",
+        "factors": { "severity_fallback": "45" },
+        "missing_inputs": ["asset_criticality", "environment", "internet_facing"] }
+    },
+    {
+      "id": "fallback_critical_no_cve",
+      "why": "Fallback for critical mirrors CVSS 9.5.",
+      "input": { "has_cve": false, "source_severity": "critical" },
+      "expected": { "score": 57, "severity": "high", "band": "elevated",
+        "factors": { "severity_fallback": "57" },
+        "missing_inputs": ["asset_criticality", "environment", "internet_facing"] }
+    },
+    {
+      "id": "fallback_info_no_cve",
+      "why": "Informational findings score 0.",
+      "input": { "has_cve": false, "source_severity": "info" },
+      "expected": { "score": 0, "severity": "info", "band": "low",
+        "factors": { "severity_fallback": "0" },
+        "missing_inputs": ["asset_criticality", "environment", "internet_facing"] }
+    },
+    {
+      "id": "cve_without_cvss",
+      "why": "A CVE with no CVSS yet (NVD backlog): fallback base, and cvss is reported missing.",
+      "input": { "source_severity": "medium" },
+      "expected": { "score": 33, "severity": "medium", "band": "moderate",
+        "factors": { "severity_fallback": "33" },
+        "missing_inputs": ["asset_criticality", "cvss", "environment", "epss", "internet_facing"] }
+    },
+    {
+      "id": "kev",
+      "why": "Known exploited adds 25.",
+      "input": { "cvss_base": "7.5", "kev": true },
+      "expected": { "score": 70, "severity": "high", "band": "elevated",
+        "factors": { "cvss_base": "45.0", "known_exploited": "25" },
+        "missing_inputs": ["asset_criticality", "environment", "epss", "internet_facing"] }
+    },
+    {
+      "id": "kev_suppresses_public_exploit",
+      "why": "KEV already implies an exploit; public_exploit is not double-counted.",
+      "input": { "cvss_base": "7.5", "kev": true, "exploit_available": true },
+      "expected": { "score": 70, "severity": "high", "band": "elevated",
+        "factors": { "cvss_base": "45.0", "known_exploited": "25" },
+        "missing_inputs": ["asset_criticality", "environment", "epss", "internet_facing"] }
+    },
+    {
+      "id": "public_exploit",
+      "why": "Tool-reported public exploit (e.g. Nessus) adds 10.",
+      "input": { "cvss_base": "7.5", "exploit_available": true },
+      "expected": { "score": 55, "severity": "high", "band": "elevated",
+        "factors": { "cvss_base": "45.0", "public_exploit": "10" },
+        "missing_inputs": ["asset_criticality", "environment", "epss", "internet_facing"] }
+    },
+    {
+      "id": "kev_unknown",
+      "why": "KEV not looked up yet: nothing added, reported missing.",
+      "input": { "cvss_base": "7.5", "kev": null },
+      "expected": { "score": 45, "severity": "medium", "band": "moderate",
+        "factors": { "cvss_base": "45.0" },
+        "missing_inputs": ["asset_criticality", "environment", "epss", "internet_facing", "kev"] }
+    },
+    {
+      "id": "epss_high",
+      "why": "EPSS >= 0.5 adds 15.",
+      "input": { "cvss_base": "7.5", "epss": "0.62" },
+      "expected": { "score": 60, "severity": "high", "band": "elevated",
+        "factors": { "cvss_base": "45.0", "epss": "15" },
+        "missing_inputs": ["asset_criticality", "environment", "internet_facing"] }
+    },
+    {
+      "id": "epss_at_0_5",
+      "why": "Band boundary is inclusive.",
+      "input": { "cvss_base": "7.5", "epss": "0.5" },
+      "expected": { "score": 60, "severity": "high", "band": "elevated",
+        "factors": { "cvss_base": "45.0", "epss": "15" },
+        "missing_inputs": ["asset_criticality", "environment", "internet_facing"] }
+    },
+    {
+      "id": "epss_mid",
+      "why": "0.1 <= EPSS < 0.5 adds 8.",
+      "input": { "cvss_base": "7.5", "epss": "0.25" },
+      "expected": { "score": 53, "severity": "high", "band": "elevated",
+        "factors": { "cvss_base": "45.0", "epss": "8" },
+        "missing_inputs": ["asset_criticality", "environment", "internet_facing"] }
+    },
+    {
+      "id": "epss_at_0_1",
+      "why": "Band boundary is inclusive.",
+      "input": { "cvss_base": "7.5", "epss": "0.1" },
+      "expected": { "score": 53, "severity": "high", "band": "elevated",
+        "factors": { "cvss_base": "45.0", "epss": "8" },
+        "missing_inputs": ["asset_criticality", "environment", "internet_facing"] }
+    },
+    {
+      "id": "epss_neutral",
+      "why": "0.01 <= EPSS < 0.1 is neutral: no factor.",
+      "input": { "cvss_base": "7.5", "epss": "0.05" },
+      "expected": { "score": 45, "severity": "medium", "band": "moderate",
+        "factors": { "cvss_base": "45.0" },
+        "missing_inputs": ["asset_criticality", "environment", "internet_facing"] }
+    },
+    {
+      "id": "epss_at_0_01",
+      "why": "Exactly 0.01 is neutral; the low band is strictly below.",
+      "input": { "cvss_base": "7.5", "epss": "0.01" },
+      "expected": { "score": 45, "severity": "medium", "band": "moderate",
+        "factors": { "cvss_base": "45.0" },
+        "missing_inputs": ["asset_criticality", "environment", "internet_facing"] }
+    },
+    {
+      "id": "epss_low",
+      "why": "EPSS < 0.01 subtracts 5.",
+      "input": { "cvss_base": "7.5", "epss": "0.0042" },
+      "expected": { "score": 40, "severity": "medium", "band": "moderate",
+        "factors": { "cvss_base": "45.0", "epss": "-5" },
+        "missing_inputs": ["asset_criticality", "environment", "internet_facing"] }
+    },
+    {
+      "id": "critical_with_threat",
+      "why": "Critical CVSS plus KEV plus high EPSS reaches critical.",
+      "input": { "cvss_base": "9.8", "source_severity": "critical", "kev": true, "epss": "0.97" },
+      "expected": { "score": 99, "severity": "critical", "band": "very_high",
+        "factors": { "cvss_base": "58.8", "known_exploited": "25", "epss": "15" },
+        "missing_inputs": ["asset_criticality", "environment", "internet_facing"] }
+    },
+    {
+      "id": "clamp_high",
+      "why": "Raw 133 clamps to 100. Production adds 0, so it is not listed.",
+      "input": { "cvss_base": "10.0", "source_severity": "critical", "kev": true, "epss": "0.9",
+        "internet_facing": true, "asset_criticality": "critical", "environment": "production",
+        "confidence": "confirmed" },
+      "expected": { "score": 100, "severity": "critical", "band": "very_high",
+        "factors": { "cvss_base": "60.0", "known_exploited": "25", "epss": "15",
+          "internet_facing": "10", "asset_criticality": "8", "validation_confidence": "15" },
+        "missing_inputs": [] }
+    },
+    {
+      "id": "internet_facing",
+      "why": "Internet-facing adds 10.",
+      "input": { "cvss_base": "7.5", "internet_facing": true },
+      "expected": { "score": 55, "severity": "high", "band": "elevated",
+        "factors": { "cvss_base": "45.0", "internet_facing": "10" },
+        "missing_inputs": ["asset_criticality", "environment", "epss"] }
+    },
+    {
+      "id": "not_internet_facing",
+      "why": "Known internal subtracts 5. Unknown subtracts nothing.",
+      "input": { "cvss_base": "7.5", "internet_facing": false },
+      "expected": { "score": 40, "severity": "medium", "band": "moderate",
+        "factors": { "cvss_base": "45.0", "internet_facing": "-5" },
+        "missing_inputs": ["asset_criticality", "environment", "epss"] }
+    },
+    {
+      "id": "critical_asset_production",
+      "why": "Critical asset adds 8; production is the neutral baseline.",
+      "input": { "cvss_base": "7.5", "asset_criticality": "critical", "environment": "production" },
+      "expected": { "score": 53, "severity": "high", "band": "elevated",
+        "factors": { "cvss_base": "45.0", "asset_criticality": "8" },
+        "missing_inputs": ["epss", "internet_facing"] }
+    },
+    {
+      "id": "low_asset_non_production",
+      "why": "Low-criticality, non-production asset.",
+      "input": { "cvss_base": "7.5", "asset_criticality": "low", "environment": "non_production" },
+      "expected": { "score": 36, "severity": "medium", "band": "moderate",
+        "factors": { "cvss_base": "45.0", "asset_criticality": "-4", "environment": "-5" },
+        "missing_inputs": ["epss", "internet_facing"] }
+    },
+    {
+      "id": "medium_asset_is_neutral",
+      "why": "A zero-weight value is known (not missing) but not listed as a factor.",
+      "input": { "cvss_base": "7.5", "asset_criticality": "medium" },
+      "expected": { "score": 45, "severity": "medium", "band": "moderate",
+        "factors": { "cvss_base": "45.0" },
+        "missing_inputs": ["environment", "epss", "internet_facing"] }
+    },
+    {
+      "id": "clamp_low",
+      "why": "Raw -27 clamps to 0.",
+      "input": { "cvss_base": "1.0", "source_severity": "low", "epss": "0.001",
+        "internet_facing": false, "asset_criticality": "low", "environment": "non_production",
+        "confidence": "untested", "evidence_completeness": "none" },
+      "expected": { "score": 0, "severity": "info", "band": "low",
+        "factors": { "cvss_base": "6.0", "epss": "-5", "internet_facing": "-5",
+          "asset_criticality": "-4", "environment": "-5", "validation_confidence": "-8",
+          "evidence_completeness": "-6" },
+        "missing_inputs": [] }
+    },
+    {
+      "id": "endpoint_confirmed_internet",
+      "why": "Confirmed exploitation is threat evidence for findings with no CVE.",
+      "input": { "has_cve": false, "cvss_base": "9.8", "source_severity": "critical",
+        "confidence": "confirmed", "internet_facing": true },
+      "expected": { "score": 84, "severity": "critical", "band": "very_high",
+        "factors": { "cvss_base": "58.8", "validation_confidence": "15", "internet_facing": "10" },
+        "missing_inputs": ["asset_criticality", "environment"] }
+    },
+    {
+      "id": "sample_sqli_login",
+      "why": "fnd_e90bb7: Likely, partial evidence, internet-facing, critical financial ERP.",
+      "input": { "has_cve": false, "cvss_base": "9.8", "source_severity": "critical",
+        "confidence": "likely", "evidence_completeness": "partial", "internet_facing": true,
+        "asset_criticality": "critical", "environment": "production" },
+      "expected": { "score": 82, "severity": "critical", "band": "very_high",
+        "factors": { "cvss_base": "58.8", "validation_confidence": "8",
+          "evidence_completeness": "-3", "internet_facing": "10", "asset_criticality": "8" },
+        "missing_inputs": [] }
+    },
+    {
+      "id": "endpoint_potential",
+      "why": "Potential is a lead, not a fact: no confidence bonus, so critical CVSS lands at high.",
+      "input": { "has_cve": false, "cvss_base": "9.8", "source_severity": "critical",
+        "confidence": "potential", "evidence_completeness": "partial", "internet_facing": true },
+      "expected": { "score": 66, "severity": "high", "band": "elevated",
+        "factors": { "cvss_base": "58.8", "evidence_completeness": "-3", "internet_facing": "10" },
+        "missing_inputs": ["asset_criticality", "environment"] }
+    },
+    {
+      "id": "endpoint_untested_no_evidence",
+      "why": "Untested with no evidence: a critical CVSS lands at medium.",
+      "input": { "has_cve": false, "cvss_base": "9.8", "source_severity": "critical",
+        "confidence": "untested", "evidence_completeness": "none" },
+      "expected": { "score": 45, "severity": "medium", "band": "moderate",
+        "factors": { "cvss_base": "58.8", "validation_confidence": "-8",
+          "evidence_completeness": "-6" },
+        "missing_inputs": ["asset_criticality", "environment", "internet_facing"] }
+    },
+    {
+      "id": "endpoint_fallback_likely",
+      "why": "Endpoint finding with no CVSS at all.",
+      "input": { "has_cve": false, "confidence": "likely", "internet_facing": true },
+      "expected": { "score": 63, "severity": "high", "band": "elevated",
+        "factors": { "severity_fallback": "45", "validation_confidence": "8",
+          "internet_facing": "10" },
+        "missing_inputs": ["asset_criticality", "environment"] }
+    },
+    {
+      "id": "sample_cilium",
+      "why": "fnd_a41f03 with live intel (2026-10-12): NVD 7.2, EPSS 0.62%, internal, medium-criticality production image.",
+      "input": { "cvss_base": "7.2", "epss": "0.0062", "internet_facing": false,
+        "asset_criticality": "medium", "environment": "production" },
+      "expected": { "score": 33, "severity": "medium", "band": "moderate",
+        "factors": { "cvss_base": "43.2", "epss": "-5", "internet_facing": "-5" },
+        "missing_inputs": [] }
+    },
+    {
+      "id": "sample_rdp_mitm",
+      "why": "fnd_7c2a91: CVSS v2 4.3, Nessus public exploit, internal QA host.",
+      "input": { "cvss_base": "4.3", "source_severity": "medium", "exploit_available": true,
+        "epss": "0.0349", "internet_facing": false, "asset_criticality": "medium",
+        "environment": "non_production" },
+      "expected": { "score": 26, "severity": "medium", "band": "moderate",
+        "factors": { "cvss_base": "25.8", "public_exploit": "10", "internet_facing": "-5",
+          "environment": "-5" },
+        "missing_inputs": [] }
+    },
+    {
+      "id": "sample_eol_posture",
+      "why": "Prototype 'eol': posture finding, no CVSS, critical source severity, internal QA host.",
+      "input": { "has_cve": false, "source_severity": "critical", "internet_facing": false,
+        "asset_criticality": "medium", "environment": "non_production" },
+      "expected": { "score": 47, "severity": "medium", "band": "moderate",
+        "factors": { "severity_fallback": "57", "internet_facing": "-5", "environment": "-5" },
+        "missing_inputs": [] }
+    },
+    {
+      "id": "boundary_75",
+      "why": "Exactly 75 is critical.",
+      "input": { "cvss_base": "7.0", "kev": true, "asset_criticality": "critical" },
+      "expected": { "score": 75, "severity": "critical", "band": "very_high",
+        "factors": { "cvss_base": "42.0", "known_exploited": "25", "asset_criticality": "8" },
+        "missing_inputs": ["environment", "epss", "internet_facing"] }
+    },
+    {
+      "id": "boundary_74",
+      "why": "74 is high.",
+      "input": { "cvss_base": "6.5", "kev": true, "internet_facing": true },
+      "expected": { "score": 74, "severity": "high", "band": "elevated",
+        "factors": { "cvss_base": "39.0", "known_exploited": "25", "internet_facing": "10" },
+        "missing_inputs": ["asset_criticality", "environment", "epss"] }
+    },
+    {
+      "id": "boundary_50",
+      "why": "Exactly 50 is high.",
+      "input": { "cvss_base": "5.0", "source_severity": "medium", "exploit_available": true,
+        "internet_facing": true },
+      "expected": { "score": 50, "severity": "high", "band": "elevated",
+        "factors": { "cvss_base": "30.0", "public_exploit": "10", "internet_facing": "10" },
+        "missing_inputs": ["asset_criticality", "environment", "epss"] }
+    },
+    {
+      "id": "boundary_49",
+      "why": "48.8 rounds to 49: medium.",
+      "input": { "cvss_base": "4.8", "source_severity": "medium", "exploit_available": true,
+        "internet_facing": true },
+      "expected": { "score": 49, "severity": "medium", "band": "moderate",
+        "factors": { "cvss_base": "28.8", "public_exploit": "10", "internet_facing": "10" },
+        "missing_inputs": ["asset_criticality", "environment", "epss"] }
+    },
+    {
+      "id": "boundary_25",
+      "why": "Exactly 25 is medium.",
+      "input": { "cvss_base": "5.0", "source_severity": "medium", "internet_facing": false },
+      "expected": { "score": 25, "severity": "medium", "band": "moderate",
+        "factors": { "cvss_base": "30.0", "internet_facing": "-5" },
+        "missing_inputs": ["asset_criticality", "environment", "epss"] }
+    },
+    {
+      "id": "boundary_24",
+      "why": "24 is low.",
+      "input": { "cvss_base": "4.0", "source_severity": "medium" },
+      "expected": { "score": 24, "severity": "low", "band": "low",
+        "factors": { "cvss_base": "24.0" },
+        "missing_inputs": ["asset_criticality", "environment", "epss", "internet_facing"] }
+    },
+    {
+      "id": "boundary_1",
+      "why": "1 is low; only 0 is info.",
+      "input": { "cvss_base": "1.0", "source_severity": "low", "internet_facing": false },
+      "expected": { "score": 1, "severity": "low", "band": "low",
+        "factors": { "cvss_base": "6.0", "internet_facing": "-5" },
+        "missing_inputs": ["asset_criticality", "environment", "epss"] }
+    }
+  ]
+}

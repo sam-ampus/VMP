@@ -4,7 +4,6 @@ A Finding never carries assessment, status, or its Vulnerability link. Those liv
 the Vulnerability record, so a Finding can stay exactly as the tool reported it.
 """
 
-from decimal import Decimal
 from typing import Annotated, Any, Literal, Self
 from urllib.parse import urlsplit
 
@@ -23,7 +22,6 @@ from vmp.schema import keys
 from vmp.schema.enums import (
     Confidence,
     ConfidenceSource,
-    CvssSelectionRule,
     CvssVersion,
     EvidenceCompleteness,
     FixStatus,
@@ -158,41 +156,16 @@ class CvssScore(Model):
     vector: str | None = None
 
 
-class CvssSelected(Model):
-    """The chosen score and the rule that chose it. Without the rule, not reproducible."""
-
-    source: SourceName
-    version: CvssVersion
-    base: CvssBase
-    rule: CvssSelectionRule
-
-
 class Scores(Model):
+    """Scores exactly as the tool reported them.
+
+    No CVSS is selected here: locked decision 1's precedence (NVD, then CNA) needs
+    enrichment, which happens after ingest. See vmp.pipeline.cvss.
+    """
+
     cvss: tuple[CvssScore, ...] = ()
-    cvss_selected: CvssSelected | None = None
-    epss: Probability | None = None  # only as reported by the tool; enrichment is separate
+    epss: Probability | None = None
     kev: bool | None = None
-
-    @model_validator(mode="after")
-    def _selected_is_stored(self) -> Self:
-        sel = self.cvss_selected
-        if sel is not None and not any(
-            c.source == sel.source and c.version == sel.version and c.base == sel.base
-            for c in self.cvss
-        ):
-            raise ValueError("cvss_selected does not match any entry in cvss")
-        return self
-
-    def cvss_spread(self) -> Decimal | None:
-        """Max minus min base score among sources on the selected CVSS version.
-
-        Only same-version scores are compared: v2 and v3 scales are not comparable.
-        The 'contested' threshold is policy and lives in scoring, not here.
-        """
-        if self.cvss_selected is None:
-            return None
-        bases = [c.base for c in self.cvss if c.version == self.cvss_selected.version]
-        return max(bases) - min(bases) if len(bases) > 1 else None
 
 
 # --- How sure, and what supports it ---------------------------------------------
@@ -237,7 +210,20 @@ class Evidence(Model):
     references: tuple[str, ...] = ()
 
 
-# --- The Finding -----------------------------------------------------------------
+# --- The Finding and its sightings -------------------------------------------------
+
+
+class Sighting(Model):
+    """A later scan observing the same Finding (same idempotency key, Vulnerability still open).
+
+    Append-only: re-sightings are recorded here instead of updating the Finding, so the
+    Finding stays exactly as first reported. 'Last seen' is the latest sighting.
+    """
+
+    finding_id: FindingId
+    scan_id: NonEmptyStr
+    ingest_batch_id: NonEmptyStr
+    detected_at: AwareDatetime
 
 
 class Finding(Model):

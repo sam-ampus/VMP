@@ -1,10 +1,10 @@
 """Canonical model: Finding, Vulnerability, RiskAssessment, FPAssessment, RemediationAction."""
 
 from vmp.schema.action import RemediationAction, SharedBasis
+from vmp.schema.enrichment import CvssSelection, Enrichment, SourcedCvss
 from vmp.schema.finding import (
     Classification,
     CvssScore,
-    CvssSelected,
     EndpointLocus,
     Evidence,
     ExploitSignals,
@@ -14,6 +14,7 @@ from vmp.schema.finding import (
     PackageLocus,
     RemediationSource,
     Scores,
+    Sighting,
     Source,
     ValidationStatus,
 )
@@ -38,8 +39,9 @@ __all__ = [
     "Classification",
     "Closure",
     "CvssScore",
-    "CvssSelected",
+    "CvssSelection",
     "EndpointLocus",
+    "Enrichment",
     "Evidence",
     "ExploitSignals",
     "FPAssessment",
@@ -57,7 +59,9 @@ __all__ = [
     "RiskAssessment",
     "Scores",
     "SharedBasis",
+    "Sighting",
     "Source",
+    "SourcedCvss",
     "ValidationStatus",
     "Vulnerability",
     "validate_batch",

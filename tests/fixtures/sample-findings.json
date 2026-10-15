@@ -2,10 +2,7 @@
   "_corrections": [
     "Derived from skill/vmp-findings-engine/references/sample-findings.json; that file is unchanged.",
     "vulnerability_id removed from every finding: a Finding is immutable and is linked to its Vulnerability by the Vulnerability record, after correlation.",
-    "cvss_selected now records its source, and its rule is a locked-decision-1 precedence tier (distro/nvd/cna/tool).",
-    "fnd_7c2a91 (nessus): rule highest_version_available -> tool (the only source is the tool).",
-    "fnd_a41f03 (trivy/cilium): selection changed from bitnami 7.2 (max_base_across_sources) to ghsa 6.5 (cna). Assumes GitHub is the issuing CNA for CVE-2024-28248; bitnami is neither distro, NVD nor CNA, and this is a Go module, not an OS package.",
-    "fnd_e90bb7 (mirror): rule single_source -> tool.",
+    "cvss_selected removed from every finding. Locked decision 1's precedence (NVD, then CNA, then tool) needs enrichment, so selection runs after ingest (vmp.pipeline.cvss), not in the Finding. Checked against live NVD on 2026-10-12: CVE-2024-28248 is scored 7.2 by NVD and by its CNA (GitHub), so it selects NVD 7.2; Trivy's 'ghsa' 6.5 is not the CNA record's score.",
     "fnd_e90bb7: free-text parameter 'email, password (JSON body)' split into parameters [email, password] + parameter_location body; original kept in parameter_raw.",
     "fnd_e90bb7: idempotency_key uses the full url as the spec format (tool:scan_id:url:method:parameter) says; the original used the path only."
   ],
@@ -54,7 +51,6 @@
         "cvss": [
           { "source": "nessus", "version": "2.0", "base": 4.3, "vector": "AV:N/AC:M/Au:N/C:P/I:N/A:N" }
         ],
-        "cvss_selected": { "source": "nessus", "version": "2.0", "base": 4.3, "rule": "tool" },
         "epss": null,
         "kev": false
       },
@@ -116,7 +112,6 @@
           { "source": "bitnami", "version": "3.1", "base": 7.2, "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:L/I:L/A:N" },
           { "source": "ghsa", "version": "3.1", "base": 6.5, "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N" }
         ],
-        "cvss_selected": { "source": "ghsa", "version": "3.1", "base": 6.5, "rule": "cna" },
         "epss": 0.0042,
         "kev": false
       },
@@ -176,7 +171,6 @@
         "cvss": [
           { "source": "mirror", "version": "3.1", "base": 9.8, "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H" }
         ],
-        "cvss_selected": { "source": "mirror", "version": "3.1", "base": 9.8, "rule": "tool" },
         "epss": null,
         "kev": false
       },

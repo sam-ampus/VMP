@@ -134,55 +134,6 @@
       "title": "CvssScore",
       "type": "object"
     },
-    "CvssSelected": {
-      "additionalProperties": false,
-      "description": "The chosen score and the rule that chose it. Without the rule, not reproducible.",
-      "properties": {
-        "base": {
-          "anyOf": [
-            {
-              "maximum": 10.0,
-              "minimum": 0.0,
-              "type": "number"
-            },
-            {
-              "type": "string"
-            }
-          ],
-          "title": "Base"
-        },
-        "rule": {
-          "$ref": "#/$defs/CvssSelectionRule"
-        },
-        "source": {
-          "pattern": "^[a-z0-9][a-z0-9_.-]*$",
-          "title": "Source",
-          "type": "string"
-        },
-        "version": {
-          "$ref": "#/$defs/CvssVersion"
-        }
-      },
-      "required": [
-        "source",
-        "version",
-        "base",
-        "rule"
-      ],
-      "title": "CvssSelected",
-      "type": "object"
-    },
-    "CvssSelectionRule": {
-      "description": "Which precedence tier chose the CVSS value (locked decision 1).\n\nOS packages: distro first. Otherwise: NVD, then the issuing CNA, then the tool.",
-      "enum": [
-        "distro",
-        "nvd",
-        "cna",
-        "tool"
-      ],
-      "title": "CvssSelectionRule",
-      "type": "string"
-    },
     "CvssVersion": {
       "enum": [
         "2.0",
@@ -590,6 +541,7 @@
     },
     "Scores": {
       "additionalProperties": false,
+      "description": "Scores exactly as the tool reported them.\n\nNo CVSS is selected here: locked decision 1's precedence (NVD, then CNA) needs\nenrichment, which happens after ingest. See vmp.pipeline.cvss.",
       "properties": {
         "cvss": {
           "default": [],
@@ -598,17 +550,6 @@
           },
           "title": "Cvss",
           "type": "array"
-        },
-        "cvss_selected": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/CvssSelected"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null
         },
         "epss": {
           "anyOf": [
@@ -815,7 +756,6 @@
       "$ref": "#/$defs/Scores",
       "default": {
         "cvss": [],
-        "cvss_selected": null,
         "epss": null,
         "kev": null
       }

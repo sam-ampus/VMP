@@ -1,0 +1,58 @@
+{
+  "version": "w-0.1",
+  "base": {
+    "cvss_multiplier": "6",
+    "severity_fallback": {
+      "critical": "57",
+      "high": "45",
+      "medium": "33",
+      "low": "18",
+      "info": "0"
+    }
+  },
+  "threat": {
+    "known_exploited": "25",
+    "public_exploit": "10",
+    "epss_bands": [
+      { "min": "0.5", "points": "15" },
+      { "min": "0.1", "points": "8" }
+    ],
+    "epss_low_below": "0.01",
+    "epss_low_points": "-5"
+  },
+  "exposure": {
+    "internet_facing": "10",
+    "not_internet_facing": "-5",
+    "asset_criticality": {
+      "critical": "8",
+      "high": "4",
+      "medium": "0",
+      "low": "-4"
+    },
+    "environment": {
+      "production": "0",
+      "non_production": "-5"
+    }
+  },
+  "validation": {
+    "confidence": {
+      "confirmed": "15",
+      "likely": "8",
+      "potential": "0",
+      "untested": "-8",
+      "unvalidated": "0"
+    },
+    "evidence_completeness": {
+      "full": "0",
+      "partial": "-3",
+      "none": "-6"
+    }
+  },
+  "severity_thresholds": [
+    { "min_score": 75, "severity": "critical", "band": "very_high" },
+    { "min_score": 50, "severity": "high", "band": "elevated" },
+    { "min_score": 25, "severity": "medium", "band": "moderate" },
+    { "min_score": 1, "severity": "low", "band": "low" },
+    { "min_score": 0, "severity": "info", "band": "low" }
+  ]
+}

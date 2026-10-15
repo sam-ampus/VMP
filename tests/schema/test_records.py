@@ -19,7 +19,8 @@ def vuln(**over: Any) -> dict[str, Any]:
 def assessment(**over: Any) -> dict[str, Any]:
     factor = {"name": "exploit_available", "direction": "up", "observed": "true",
               "weight": "8", "contribution": "8", "source": "tool"}
-    return {"vulnerability_id": "vln_cve-2005-1794", "score": 48, "band": "moderate",
+    return {"vulnerability_id": "vln_cve-2005-1794", "peak_finding_id": "fnd_7c2a91",
+            "score": 48, "band": "moderate",
             "computed_severity": "medium", "source_severity": "medium", "factors": [factor],
             "weights_version": "w-0.1", "engine_version": "0.1.0", "assessed_at": NOW} | over
 
