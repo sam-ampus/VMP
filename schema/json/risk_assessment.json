@@ -116,6 +116,18 @@
       "title": "Assessed At",
       "type": "string"
     },
+    "asset_inventory_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Asset Inventory Id"
+    },
     "band": {
       "$ref": "#/$defs/ScoreBand"
     },

@@ -1,0 +1,5 @@
+asset_ref,name,aliases,internet_facing,criticality,environment,owner
+ast_10-31-112-29,qa3app09,10.31.112.29;qa3app09;QA3APP09.corp.local,false,medium,non_production,QA infrastructure
+ast_k-client-image,k-client container image,k-client;registry.local/k-client,false,medium,production,Platform team
+ast_erp-fintec-solutions,QPay financial ERP,erp.fintec.solutions;192.168.100.10:8000,true,critical,production,Finance apps
+ast_unassessed-host,Host with no business context yet,10.31.112.50,,,,

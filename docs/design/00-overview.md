@@ -76,13 +76,13 @@ Every feature should trace back to that sentence:
  asset inventory ──────────────────────────────────────────────────────────►┘
 ```
 
-| Stage | Status (2026-10-21) |
+| Stage | Status (2026-10-22) |
 |---|---|
 | Canonical schema + validation | **Built** (step 1), see [01-schema](01-schema.md) |
 | Scoring engine + test vectors | **Built** (step 2), see [02-scoring](02-scoring.md) |
 | Threat intel + CVSS selection | **Built** (step 3), see [03-intel](03-intel.md) |
-| Asset inventory | Next (step 4) |
-| Connectors (canonical JSON, Trivy) | Step 5 |
+| Asset inventory | **Built** (step 4), see [04-assets](04-assets.md) |
+| Connectors (canonical JSON, Trivy) + seed data + glue | Next (step 5) |
 | Nessus/Qualys, dedupe/correlate, FP triage | Stage 2 |
 | Clustering, UI, report, events | Stage 3 |
 

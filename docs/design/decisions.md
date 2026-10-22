@@ -35,3 +35,9 @@ One line per decision: date, what was decided, why, and where it came from. Newe
 | 2026-10-12 | CVSS selection runs after enrichment, not at ingest | Live data showed the CNA score is 7.2, not Trivy's "ghsa 6.5" | Step 3 |
 | 2026-10-12 | CVSS v3.1 preferred over v4.0 when both exist (configurable) | Weights calibrated on v3 | Step 3 |
 | 2026-10-21 | Design notes live in `docs/design/`, one per step plus this log; `CLAUDE.md` points sessions here | The kickoff history was lost to a folder mismatch | Sam |
+| 2026-10-22 | `AssetProvider` Protocol + `AssetInventory` (in memory); CSV is only a parser | The asset data source is the most likely thing to change at the customer | Step 4 |
+| 2026-10-22 | Ambiguous identifiers (shared alias, alias = another ref, duplicate ref) reject the whole inventory at load | Guessing would silently give a finding another asset's context | Step 4 |
+| 2026-10-22 | Blank inventory fields stay `None` (unknown), never defaulted | Matches the "unknown = 0 points, listed as missing" scoring decision | Step 4 |
+| 2026-10-22 | `RiskAssessment.asset_inventory_id`: content hash of the inventory a score used | Weights + intel + inventory versions together make every score replayable | Step 4 |
+| 2026-10-22 | Identifier normalisation here = lowercase, trim, canonical IP; port and URL handling deferred to endpoint normalisation | Keep locked decision 4 in one place | Step 4 |
+| 2026-10-22 | Mock `seed/demo/assets.csv` moved from step 4 to step 5 | It must match the DefectDojo scans, which are chosen in step 5 | Step 4 |
