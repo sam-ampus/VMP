@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE SCAN SYSTEM "https://qualysguard.qg1.apps.qualys.in/scan-1.dtd">
+<SCAN value="scan/1700000000.00001">
+    <HEADER>
+        <KEY value="USERNAME">example</KEY>
+        <KEY value="COMPANY"><![CDATA[Example Org]]></KEY>
+        <KEY value="DATE">2026-10-14T07:56:07Z</KEY>
+        <KEY value="TITLE"><![CDATA[AC_Example-IVA_Q3_12-10-2026]]></KEY>
+        <KEY value="TARGET"><![CDATA[192.0.2.10, 192.0.2.11]]></KEY>
+        <KEY value="DURATION">00:42:00</KEY>
+        <KEY value="SCAN_HOST">(unknown) (Scanner 14.5.6-1, Vulnerability Signatures 2.6.252-3)</KEY>
+        <KEY value="NBHOST_ALIVE">2</KEY>
+        <KEY value="NBHOST_TOTAL">2</KEY>
+        <KEY value="REPORT_TYPE">On-demand</KEY>
+        <KEY value="OPTIONS"><![CDATA[Full TCP scan, Windows Authentication ON, Unix Authentication ON, SNMP Authentication OFF]]></KEY>
+        <KEY value="STATUS">FINISHED</KEY>
+        <OPTION_PROFILE>
+            <OPTION_PROFILE_TITLE option_profile_default="0"><![CDATA[Authenticated Scan : Full Scan : 2025]]></OPTION_PROFILE_TITLE>
+        </OPTION_PROFILE>
+    </HEADER>
+    <IP value="192.0.2.10" name="web01.example.com">
+        <OS><![CDATA[Ubuntu / Linux 22.04]]></OS>
+        <INFOS>
+            <CAT value="Information gathering">
+                <INFO number="45038" severity="1"><TITLE><![CDATA[Host Scan Time]]></TITLE><PCI_FLAG>0</PCI_FLAG><DIAGNOSIS>n/a</DIAGNOSIS><RESULT>Scan duration: 42 seconds</RESULT></INFO>
+                <INFO number="6" severity="1"><TITLE><![CDATA[DNS Host Name]]></TITLE><PCI_FLAG>0</PCI_FLAG><DIAGNOSIS>n/a</DIAGNOSIS><RESULT>web01.example.com</RESULT></INFO>
+            </CAT>
+        </INFOS>
+        <SERVICES>
+            <CAT value="TCP/IP" port="443" protocol="tcp">
+                <SERVICE number="82023" severity="1"><TITLE><![CDATA[Open TCP Services List]]></TITLE><PCI_FLAG>0</PCI_FLAG><DIAGNOSIS>n/a</DIAGNOSIS><RESULT>443 https</RESULT></SERVICE>
+            </CAT>
+        </SERVICES>
+        <VULNS>
+            <CAT value="General remote services" port="443" protocol="tcp">
+                <VULN number="38173" severity="3" cveid="CVE-2016-2183">
+                    <TITLE><![CDATA[SSL Certificate - Signature Verification Failed Vulnerability]]></TITLE>
+                    <LAST_UPDATE><![CDATA[2025-01-01T00:00:00Z]]></LAST_UPDATE>
+                    <PCI_FLAG>1</PCI_FLAG>
+                    <CVE_ID_LIST>
+                        <CVE_ID><ID><![CDATA[CVE-2016-2183]]></ID><URL><![CDATA[https://nvd.nist.gov/vuln/detail/CVE-2016-2183]]></URL></CVE_ID>
+                        <CVE_ID><ID><![CDATA[CVE-2016-6329]]></ID><URL><![CDATA[https://nvd.nist.gov/vuln/detail/CVE-2016-6329]]></URL></CVE_ID>
+                    </CVE_ID_LIST>
+                    <DIAGNOSIS><![CDATA[The certificate chain could not be verified.]]></DIAGNOSIS>
+                    <CONSEQUENCE><![CDATA[Clients may be exposed to interception.]]></CONSEQUENCE>
+                    <SOLUTION><![CDATA[Install a certificate signed by a trusted CA.]]></SOLUTION>
+                    <CORRELATION><EXPLOITABILITY><EXPLT_SRC><SRC_NAME>Example DB</SRC_NAME></EXPLT_SRC></EXPLOITABILITY></CORRELATION>
+                    <RESULT format="table">plain result</RESULT>
+                </VULN>
+            </CAT>
+            <CAT value="General remote services" port="443" protocol="tcp" misc="over ssl">
+                <VULN number="38173" severity="3" cveid="CVE-2016-2183">
+                    <TITLE><![CDATA[SSL Certificate - Signature Verification Failed Vulnerability]]></TITLE>
+                    <PCI_FLAG>1</PCI_FLAG>
+                    <DIAGNOSIS><![CDATA[The certificate chain could not be verified.]]></DIAGNOSIS>
+                    <SOLUTION><![CDATA[Install a certificate signed by a trusted CA.]]></SOLUTION>
+                    <RESULT>ssl result</RESULT>
+                </VULN>
+            </CAT>
+            <CAT value="Local">
+                <VULN number="105489" severity="2">
+                    <TITLE><![CDATA[Host-level weakness with no port]]></TITLE>
+                    <PCI_FLAG>0</PCI_FLAG>
+                    <DIAGNOSIS><![CDATA[Illustrative.]]></DIAGNOSIS>
+                    <RESULT>host-level</RESULT>
+                </VULN>
+            </CAT>
+        </VULNS>
+        <PRACTICES>
+            <CAT value="SSH" port="22" protocol="tcp">
+                <PRACTICE number="38913" severity="4" cveid="CVE-2023-48795">
+                    <TITLE><![CDATA[SSH Prefix Truncation Vulnerability (Terrapin)]]></TITLE>
+                    <PCI_FLAG>1</PCI_FLAG>
+                    <DIAGNOSIS><![CDATA[Illustrative.]]></DIAGNOSIS>
+                    <SOLUTION><![CDATA[Upgrade OpenSSH.]]></SOLUTION>
+                    <RESULT>banner: SSH-2.0-OpenSSH_8.9</RESULT>
+                </PRACTICE>
+            </CAT>
+        </PRACTICES>
+    </IP>
+    <IP value="192.0.2.11" name="No registered hostname">
+        <VULNS>
+            <CAT value="Web server" port="80" protocol="tcp">
+                <VULN number="150004" severity="5">
+                    <TITLE><![CDATA[Illustrative urgent finding without a CVE]]></TITLE>
+                    <PCI_FLAG>1</PCI_FLAG>
+                    <DIAGNOSIS><![CDATA[Illustrative.]]></DIAGNOSIS>
+                    <RESULT>illustrative</RESULT>
+                </VULN>
+            </CAT>
+        </VULNS>
+        <PRACTICES>
+            <CAT value="Web server" port="80" protocol="tcp">
+                <PRACTICE number="150079" severity="1">
+                    <TITLE><![CDATA[Illustrative minimal potential finding]]></TITLE>
+                    <PCI_FLAG>0</PCI_FLAG>
+                    <DIAGNOSIS><![CDATA[Illustrative.]]></DIAGNOSIS>
+                    <RESULT>illustrative</RESULT>
+                </PRACTICE>
+            </CAT>
+        </PRACTICES>
+    </IP>
+</SCAN>
+<!-- Synthetic sample for tests. Not real scan data. -->

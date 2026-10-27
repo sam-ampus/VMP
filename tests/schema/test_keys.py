@@ -19,4 +19,12 @@ def test_endpoint_key_is_independent_of_parameter_order() -> None:
     url = "https://app.example/login"
     a = keys.endpoint_key("zap", "s1", url, "POST", ["password", "email"])
     b = keys.endpoint_key("zap", "s1", url, "POST", ["email", "password", "email"])
-    assert a == b == "zap:s1:https://app.example/login:POST:email,password"
+    assert a == b == "zap:s1:https://app.example/login:POST:email,password:-"
+
+
+def test_endpoint_key_separates_different_weaknesses_on_one_endpoint() -> None:
+    url = "https://app.example/main.js"
+    xss = keys.endpoint_key("mirror", "s1", url, "GET", [], ["CWE-79"])
+    secret = keys.endpoint_key("mirror", "s1", url, "GET", [], ["CWE-798"])
+    assert xss != secret
+    assert xss == "mirror:s1:https://app.example/main.js:GET:-:CWE-79"

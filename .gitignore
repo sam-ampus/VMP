@@ -7,3 +7,8 @@ __pycache__/
 dist/
 build/
 *.egg-info/
+.vmp/
+
+# Real customer scan data: never commit
+sample-data-nessus-qualys/
+data/private/

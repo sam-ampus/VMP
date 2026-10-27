@@ -27,8 +27,14 @@ def package_key(tool: str, cves: Iterable[str], native_id: str, purl: str) -> st
 
 
 def endpoint_key(
-    tool: str, scan_id: str, url: str, method: str, parameters: Iterable[str]
+    tool: str, scan_id: str, url: str, method: str, parameters: Iterable[str],
+    cwes: Iterable[str] = (),
 ) -> str:
-    """tool:scan_id:url:method:parameters. Parameter names are sorted so order is irrelevant."""
+    """tool:scan_id:url:method:parameters:cwe. Names and CWEs are sorted so order is irrelevant.
+
+    The CWE is part of the key (as in locked decision 4's endpoint key): one endpoint can
+    carry several different weaknesses, and without it they would collapse into one finding.
+    """
     params = ",".join(sorted(set(parameters))) or MISSING
-    return ":".join([tool, scan_id, url, method, params])
+    cwe = ",".join(sorted(set(cwes))) or MISSING
+    return ":".join([tool, scan_id, url, method, params, cwe])

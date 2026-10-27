@@ -22,4 +22,5 @@ Read these before working here:
 ```
 uv run pytest
 uv run ruff check; uv run mypy src scripts
+uv run vmp ingest seed/demo --as-of 2026-10-22T00:00:00Z   # end-to-end demo run
 ```

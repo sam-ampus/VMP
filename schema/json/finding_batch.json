@@ -46,6 +46,26 @@
       "const": "0.1",
       "title": "Schema Version",
       "type": "string"
+    },
+    "skipped": {
+      "additionalProperties": {
+        "minimum": 0,
+        "type": "integer"
+      },
+      "propertyNames": {
+        "minLength": 1
+      },
+      "title": "Skipped",
+      "type": "object"
+    },
+    "warnings": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
     }
   },
   "required": [

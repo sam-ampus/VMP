@@ -1,0 +1,3225 @@
+{
+  "schema_version": "0.1",
+  "ingest_batch": {
+    "batch_id": "ing_mirror_afd57ac3",
+    "source_tool": "mirror",
+    "received_at": "2026-08-18T22:01:00+00:00"
+  },
+  "findings": [
+    {
+      "finding_id": "fnd_e1446e5e91ad11f5",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://bnpl-ui-prod.fintec.solutions/main.76a700c38298b5c8.js:GET:-:CWE-1000",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-01",
+        "native_family": "idor-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_bnpl-ui-prod",
+        "url": "https://bnpl-ui-prod.fintec.solutions/main.76a700c38298b5c8.js",
+        "method": "GET",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "HMAC Request Signing Key Exposed in Public JavaScript Bundle",
+        "cwe": [
+          "CWE-1000"
+        ],
+        "owasp": "A04:2021 - Insecure Design",
+        "source_severity": "critical",
+        "source_severity_raw": "CRITICAL",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "9.8",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script",
+          "response body not captured"
+        ]
+      },
+      "remediation_source": {
+        "text": null,
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "idor-tester",
+        "report_finding": 1,
+        "endpoint_as_reported": "/main.76a700c38298b5c8.js"
+      }
+    },
+    {
+      "finding_id": "fnd_f760949de1e9ccf9",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://192.168.100.10:8000/auth/login/:POST:email,password:CWE-89",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-02",
+        "native_family": "sql-injection-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://192.168.100.10:8000/auth/login/",
+        "method": "POST",
+        "parameters": [
+          "email",
+          "password"
+        ],
+        "parameter_location": "body",
+        "parameter_raw": "email, password (JSON body)"
+      },
+      "classification": {
+        "title": "SQL Injection: Login Authentication Bypass Risk via Email/Password JSON Fields",
+        "cwe": [
+          "CWE-89"
+        ],
+        "owasp": "A03:2021 - Injection",
+        "source_severity": "critical",
+        "source_severity_raw": "CRITICAL",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "9.8",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "likely",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "response body not captured"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Use Django’s built-in authentication: authenticate(email=email) which uses parameterized ORM queries. 2. Never use raw SQL for credential verification. 3. Implement account lockout.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "sql-injection-tester",
+        "report_finding": 2,
+        "endpoint_as_reported": "/auth/login/"
+      }
+    },
+    {
+      "finding_id": "fnd_1cd0c6cb10a256d5",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://192.168.100.10:8000/auth/login/:POST:-:CWE-1000",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-03",
+        "native_family": "api-security-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://192.168.100.10:8000/auth/login/",
+        "method": "POST",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "API Credentials Transmitted Over Cleartext HTTP (No TLS)",
+        "cwe": [
+          "CWE-1000"
+        ],
+        "owasp": "A02:2021 - Cryptographic Failures",
+        "source_severity": "critical",
+        "source_severity_raw": "CRITICAL",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "9.1",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Configure HTTPS on the backend API server. 2. Update apiUrl to use https://. 3. Enable HSTS. Use nginx proxy with TLS termination for all API traffic. 4. Never use hardcoded IP addresses as API endpoints in production bundles.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "api-security-tester",
+        "report_finding": 3,
+        "endpoint_as_reported": "/auth/login/",
+        "also_reported_as": [
+          {
+            "report_finding": 69,
+            "title": "API Injection Testing Inconclusive — Backend Not Reachable; Django ORM Provides Partial Mitigation"
+          }
+        ]
+      }
+    },
+    {
+      "finding_id": "fnd_a825dce2733a28cb",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://bnpl-ui-prod.fintec.solutions/auth/authenticate:POST:-:CWE-1000",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-04",
+        "native_family": "idor-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_bnpl-ui-prod",
+        "url": "https://bnpl-ui-prod.fintec.solutions/auth/authenticate",
+        "method": "POST",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "API Request Signing Bypass via Exposed JFWHash HMAC Key",
+        "cwe": [
+          "CWE-1000"
+        ],
+        "owasp": "A04:2021 - Insecure Design",
+        "source_severity": "critical",
+        "source_severity_raw": "CRITICAL",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "9.1",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": null,
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "idor-tester",
+        "report_finding": 4,
+        "endpoint_as_reported": "/auth/authenticate",
+        "also_reported_as": [
+          {
+            "report_finding": 22,
+            "title": "Tenant Parameter Manipulation Possible via Exposed JFWHash Key"
+          }
+        ]
+      }
+    },
+    {
+      "finding_id": "fnd_00c3d21518a1e6cd",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://bnpl-ui-prod.fintec.solutions/auth/authenticate:POST:-:CWE-287",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-05",
+        "native_family": "idor-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_bnpl-ui-prod",
+        "url": "https://bnpl-ui-prod.fintec.solutions/auth/authenticate",
+        "method": "POST",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "Authentication Endpoint Accessible via Forged JFWHash - Credential Brute-Force",
+        "cwe": [
+          "CWE-287"
+        ],
+        "owasp": "A07:2021 - Identification and Authentication Failures",
+        "source_severity": "critical",
+        "source_severity_raw": "CRITICAL",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "9.1",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": null,
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "idor-tester",
+        "report_finding": 5,
+        "endpoint_as_reported": "/auth/authenticate",
+        "also_reported_as": [
+          {
+            "report_finding": 7,
+            "title": "No Rate Limiting on Authentication Endpoint Enables Brute-Force Attacks"
+          }
+        ]
+      }
+    },
+    {
+      "finding_id": "fnd_c1d04fc2b276f773",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://192.168.100.10:8000/party/post_customer_master/:POST:-:CWE-915",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-08",
+        "native_family": "mass-assignment-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://192.168.100.10:8000/party/post_customer_master/",
+        "method": "POST",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "Untitled Mirror finding on POST /party/post_customer_master/",
+        "cwe": [
+          "CWE-915"
+        ],
+        "owasp": "A04:2021 - Insecure Design",
+        "source_severity": "high",
+        "source_severity_raw": "HIGH",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "8.1",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "full",
+        "evidence_gaps": []
+      },
+      "remediation_source": {
+        "text": "1. Set read_only_fields on the DRF serializer for all privileged fields: read_only_fields = [‘kyc_status’, ‘approval_status’, ‘credit_limit’, ‘merchant_tier’, ‘is_admin’, ‘is_superuser’, ‘risk_level’, ‘aml_cleared’]. 2. Use separate admin serializers for privileged field updates.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "mass-assignment-tester",
+        "report_finding": 8,
+        "endpoint_as_reported": "/party/post_customer_master/",
+        "also_reported_as": [
+          {
+            "report_finding": 24,
+            "title": "High: Mass Assignment via Nested JSON Objects – DRF Nested Serializer Bypass"
+          }
+        ]
+      }
+    },
+    {
+      "finding_id": "fnd_8eed146560c8fc0d",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://erp.fintec.solutions/chunk-NRGHIUE2.js:GET:-:CWE-79",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-09",
+        "native_family": "api-security-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://erp.fintec.solutions/chunk-NRGHIUE2.js",
+        "method": "GET",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "JWT Authentication Tokens Stored in Browser localStorage — XSS-Accessible",
+        "cwe": [
+          "CWE-79"
+        ],
+        "owasp": "A03:2021 - Injection",
+        "source_severity": "high",
+        "source_severity_raw": "HIGH",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "8.1",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Store JWT tokens in httpOnly, Secure, SameSite=Strict cookies — inaccessible to JavaScript. 2. Implement strict Content-Security-Policy to reduce XSS exploitability. 3. Set short access token expiry (15 minutes) with refresh token rotation. 4. Eliminate innerHTML usage — use textContent or Angular’s [innerText] binding. 5. Remove bypassSecurityTrustResourceUrl — validate URL schemes explicitly.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "api-security-tester",
+        "report_finding": 9,
+        "endpoint_as_reported": "/chunk-NRGHIUE2.js"
+      }
+    },
+    {
+      "finding_id": "fnd_f0e7aa55ffce872d",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://erp.fintec.solutions/dashboard:GET:-:CWE-287",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-10",
+        "native_family": "bfla-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://erp.fintec.solutions/dashboard",
+        "method": "GET",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "Authentication Guard Bypass via hasValidToken() Weakness — Any Non-Empty localStorage Token Accepted",
+        "cwe": [
+          "CWE-287"
+        ],
+        "owasp": "A07:2021 - Identification and Authentication Failures",
+        "source_severity": "high",
+        "source_severity_raw": "HIGH",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "8.1",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "response body not captured"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Implement proper JWT validation on the frontend including signature verification and expiry checking. 2. More importantly, enforce all authorization decisions exclusively on the backend API — the frontend guard is defense-in-depth only.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "bfla-tester",
+        "report_finding": 10,
+        "endpoint_as_reported": "/dashboard"
+      }
+    },
+    {
+      "finding_id": "fnd_42ae5a4fd985d699",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://erp.fintec.solutions/manage-money:GET:-:CWE-1000",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-11",
+        "native_family": "bfla-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://erp.fintec.solutions/manage-money",
+        "method": "GET",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "Client-Side Only Permission Enforcement — localStorage roleAccessData Manipulation Grants Full Admin Privileges",
+        "cwe": [
+          "CWE-1000"
+        ],
+        "owasp": "A01:2021 - Broken Access Control",
+        "source_severity": "high",
+        "source_severity_raw": "HIGH",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "8.1",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "response body not captured"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Move all authorization enforcement to the backend API. Each API endpoint must independently verify the caller’s role and permissions using a server-side token validation. 2. Do not rely on cached client-side permission data. 3. The frontend roleAccessData should only be used for UI display purposes, not for access control decisions.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "bfla-tester",
+        "report_finding": 11,
+        "endpoint_as_reported": "/manage-money"
+      }
+    },
+    {
+      "finding_id": "fnd_756484a0c4ae88e8",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:http://192.168.100.10:8000/auth/refresh_token/:POST:-:CWE-1000",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-12",
+        "native_family": "cors-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "http://192.168.100.10:8000/auth/refresh_token/",
+        "method": "POST",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "Cross-Origin Fetch with credentials:include Targeting HTTP Backend from HTTPS Frontend",
+        "cwe": [
+          "CWE-1000"
+        ],
+        "owasp": "A07:2021 - Identification and Authentication Failures",
+        "source_severity": "high",
+        "source_severity_raw": "HIGH",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "8.1",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "full",
+        "evidence_gaps": []
+      },
+      "remediation_source": {
+        "text": "1. In Django settings.py, verify: CORS_ALLOW_ALL_ORIGINS = False and CORS_ALLOWED_ORIGINS = [‘https://erp.fintec.solutions’]. 2. Enable HTTPS on the Django backend. 3. Route all API calls through nginx at /api/ using proxy_pass to the internal backend — this eliminates the cross-origin call entirely. 4. Implement Content Security Policy (CSP) on the frontend to restrict allowed connect-src origins.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "cors-tester",
+        "report_finding": 12,
+        "endpoint_as_reported": "http://192.168.100.10:8000/auth/refresh_token/",
+        "also_reported_as": [
+          {
+            "report_finding": 54,
+            "title": "MEDIUM: Cross-Origin Token Exposure via credentials:include on Internal API"
+          }
+        ]
+      }
+    },
+    {
+      "finding_id": "fnd_1e23062deed5b679",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:http://192.168.100.10:8000/:GET:-:CWE-942",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-13",
+        "native_family": "cors-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "http://192.168.100.10:8000/",
+        "method": "GET",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "Django Backend CORS Configuration Untestable from External Host — Residual High Risk",
+        "cwe": [
+          "CWE-942"
+        ],
+        "owasp": "A05:2021 - Security Misconfiguration",
+        "source_severity": "high",
+        "source_severity_raw": "HIGH",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "8.1",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "likely",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "response body not captured"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. IMMEDIATE ACTION REQUIRED from internal access: 1. 2. Check settings.py for CORS_ALLOW_ALL_ORIGINS — must be False. 3. Verify CORS_ALLOWED_ORIGINS contains only [‘https://erp.fintec.solutions’]. 4. Confirm CORS_ALLOW_CREDENTIALS = True is paired with the above explicit allowlist (not with all-origins). 5. Run the provided internal test script to confirm no origin reflection. 6. After fixing, implement unit tests that assert the CORS middleware rejects arbitrary Origin headers.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "cors-tester",
+        "report_finding": 13,
+        "endpoint_as_reported": "http://192.168.100.10:8000"
+      }
+    },
+    {
+      "finding_id": "fnd_1a3328f429406a74",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://erp.fintec.solutions/auth/authenticate:POST:-:CWE-287",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-14",
+        "native_family": "race-condition-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://erp.fintec.solutions/auth/authenticate",
+        "method": "POST",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "No Rate Limiting on Authentication Endpoint — Concurrent Brute-Force Enabled",
+        "cwe": [
+          "CWE-287"
+        ],
+        "owasp": "A07:2021 - Identification and Authentication Failures",
+        "source_severity": "high",
+        "source_severity_raw": "HIGH",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "8.1",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Implement rate limiting on the Django backend: use django-ratelimit or DRF throttling (UserRateThrottle, AnonRateThrottle) with limits like 5 attempts per minute per IP. 2. 2. Implement account lockout after 5-10 failed attempts (with CAPTCHA challenge or temporary 15-min lock). 3. Add exponential backoff for repeated failures. 4. Apply nginx-level rate limiting: limit_req_zone $binary_remote_addr zone=auth:10m rate=5r/m in the nginx config. 5. Rotate the exposed HMAC key immediately — the key ([REDACTED]) was found in the public JS bundle, meaning any attacker can forge valid request signatures. 6. Consider IP-based blocking after N failed attempts using fail2ban.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "race-condition-tester",
+        "report_finding": 14,
+        "endpoint_as_reported": "/auth/authenticate"
+      }
+    },
+    {
+      "finding_id": "fnd_1756df329551487c",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://192.168.100.10:8000/auth/roles-create/:POST:-:CWE-915",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-15",
+        "native_family": "mass-assignment-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://192.168.100.10:8000/auth/roles-create/",
+        "method": "POST",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "Untitled Mirror finding on POST /auth/roles-create/",
+        "cwe": [
+          "CWE-915"
+        ],
+        "owasp": "A01:2021 - Broken Access Control",
+        "source_severity": "high",
+        "source_severity_raw": "HIGH",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "8.1",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "likely",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Restrict role creation to super-admin users only. 2. Mark is_admin, permissions, all_permissions as read_only_fields in RolesSerializer. 3. Validate permission assignments against an approved list.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "mass-assignment-tester",
+        "report_finding": 15,
+        "endpoint_as_reported": "/auth/roles-create/"
+      }
+    },
+    {
+      "finding_id": "fnd_7066cbda4bf872d3",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://192.168.100.10:8000/party/update_party/{id}/:PUT:-:CWE-915",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-16",
+        "native_family": "mass-assignment-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://192.168.100.10:8000/party/update_party/{id}/",
+        "method": "PUT",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "Untitled Mirror finding on PUT /party/update_party/{id}/",
+        "cwe": [
+          "CWE-915"
+        ],
+        "owasp": "A01:2021 - Broken Access Control",
+        "source_severity": "high",
+        "source_severity_raw": "HIGH",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "8.1",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "full",
+        "evidence_gaps": []
+      },
+      "remediation_source": {
+        "text": "1. Implement explicit field allowlists in the DRF serializer update method. 2. Use separate DTOs for user-modifiable fields vs admin-only fields. 3. Validate that privileged field changes are authorized through the approval workflow.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "mass-assignment-tester",
+        "report_finding": 16,
+        "endpoint_as_reported": "/party/update_party/{id}/"
+      }
+    },
+    {
+      "finding_id": "fnd_f63acfd4f0c0297b",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://erp.fintec.solutions/chunk-NRGHIUE2.js:GET:-:CWE-1000",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-17",
+        "native_family": "api-security-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://erp.fintec.solutions/chunk-NRGHIUE2.js",
+        "method": "GET",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "Internal Network Topology and Backend Architecture Disclosed in Public JavaScript Bundle",
+        "cwe": [
+          "CWE-1000"
+        ],
+        "owasp": "A04:2021 - Insecure Design",
+        "source_severity": "high",
+        "source_severity_raw": "HIGH",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "7.5",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Use relative API paths (/api/) or environment proxy configuration instead of hardcoded IPs. 2. Route all API traffic through nginx reverse proxy. 3. Implement build-time environment variable injection (Angular environment.ts with no-commit .env file). 4. Scan all JS bundles for IP patterns in CI/CD pipeline before production deployment. 5. Obfuscate production bundles.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "api-security-tester",
+        "report_finding": 17,
+        "endpoint_as_reported": "/chunk-NRGHIUE2.js",
+        "also_reported_as": [
+          {
+            "report_finding": 18,
+            "title": "Internal Network Topology Disclosed in Public JavaScript Bundle"
+          },
+          {
+            "report_finding": 47,
+            "title": "Internal Backend API IP Address Exposed in JavaScript Bundle"
+          },
+          {
+            "report_finding": 49,
+            "title": "The Angular application’s compiled JavaScript bundle (chunk-NRGHIUE2.js) publicly exposes the backend API URL as ’http:/"
+          },
+          {
+            "report_finding": 52,
+            "title": "Internal IP Address Disclosed in JavaScript Bundle"
+          },
+          {
+            "report_finding": 56,
+            "title": "Internal API URL (192.168.100.10:8000) Exposed in Production JavaScript Bundle"
+          },
+          {
+            "report_finding": 59,
+            "title": "Internal Backend API Server IP Address Exposed in Public JavaScript"
+          }
+        ]
+      }
+    },
+    {
+      "finding_id": "fnd_e12c04b3b953d073",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://erp.fintec.solutions/auth/login/:POST:-:CWE-287",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-19",
+        "native_family": "api-security-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://erp.fintec.solutions/auth/login/",
+        "method": "POST",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "No Rate Limiting on Authentication Endpoint — Brute Force Attack Enabled",
+        "cwe": [
+          "CWE-287"
+        ],
+        "owasp": "A07:2021 - Identification and Authentication Failures",
+        "source_severity": "high",
+        "source_severity_raw": "HIGH",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "7.5",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Configure nginx rate limiting for auth paths: limit_req_zone $binary_remote_addr zone=auth:10m rate=5r/m; limit_req zone=auth burst=3 nodelay. 2. Implement Django account lockout after 5 failed attempts (django-axes or django-ratelimit). 3. Add CAPTCHA (reCAPTCHA v3) after 3 consecutive failures. 4. Return 429 with Retry-After header. 5. Alert on repeated failed authentications via SIEM.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "api-security-tester",
+        "report_finding": 19,
+        "endpoint_as_reported": "/auth/login/",
+        "also_reported_as": [
+          {
+            "report_finding": 38,
+            "title": "JWT Token Authentication Flow Analysis"
+          }
+        ]
+      }
+    },
+    {
+      "finding_id": "fnd_8c06a048dfa49dcd",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://bnpl-ui-prod.fintec.solutions/mpay/download-file/{id}:GET:-:CWE-287",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-20",
+        "native_family": "idor-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_bnpl-ui-prod",
+        "url": "https://bnpl-ui-prod.fintec.solutions/mpay/download-file/{id}",
+        "method": "GET",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "Authentication Bypass: Unauthenticated Access to Document Download Endpoint",
+        "cwe": [
+          "CWE-287"
+        ],
+        "owasp": "A07:2021 - Identification and Authentication Failures",
+        "source_severity": "high",
+        "source_severity_raw": "HIGH",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "7.5",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "confirmed",
+        "confidence_source": "tool_asserted",
+        "reproduced": true,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": null,
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "idor-tester",
+        "report_finding": 20,
+        "endpoint_as_reported": "/mpay/download-file/{id}"
+      }
+    },
+    {
+      "finding_id": "fnd_66df5ce6b432fd0f",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://bnpl-ui-prod.fintec.solutions/mpay/download-file/{id}:GET:-:CWE-639",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-21",
+        "native_family": "idor-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_bnpl-ui-prod",
+        "url": "https://bnpl-ui-prod.fintec.solutions/mpay/download-file/{id}",
+        "method": "GET",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "IDOR: Sequential Document File IDs Accessible Without Authentication",
+        "cwe": [
+          "CWE-639"
+        ],
+        "owasp": "A01:2021 - Broken Access Control",
+        "source_severity": "high",
+        "source_severity_raw": "HIGH",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "7.5",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "confirmed",
+        "confidence_source": "tool_asserted",
+        "reproduced": true,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": null,
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "idor-tester",
+        "report_finding": 21,
+        "endpoint_as_reported": "/mpay/download-file/{id}"
+      }
+    },
+    {
+      "finding_id": "fnd_b7919c0b51bd475d",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://192.168.100.10:8000/employee/create_employee/:POST:-:CWE-915",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-23",
+        "native_family": "mass-assignment-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://192.168.100.10:8000/employee/create_employee/",
+        "method": "POST",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "Untitled Mirror finding on POST /employee/create_employee/",
+        "cwe": [
+          "CWE-915"
+        ],
+        "owasp": "A03:2021 - Injection",
+        "source_severity": "high",
+        "source_severity_raw": "HIGH",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "7.1",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:H/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "likely",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Define explicit writable_fields in the EmployeeSerializer. 2. Mark salary, is_admin, is_staff, role, and clearance_level as read_only_fields. 3. These should only be modifiable through dedicated admin endpoints with role-based authorization checks.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "mass-assignment-tester",
+        "report_finding": 23,
+        "endpoint_as_reported": "/employee/create_employee/"
+      }
+    },
+    {
+      "finding_id": "fnd_80194cce88b1d841",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://192.168.100.10:8000/party/create-customer/:POST:-:CWE-1000",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-25",
+        "native_family": "mass-assignment-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://192.168.100.10:8000/party/create-customer/",
+        "method": "POST",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "High: JSON Parameter Pollution – Duplicate Key Privilege Injection",
+        "cwe": [
+          "CWE-1000"
+        ],
+        "owasp": "A01:2021 - Broken Access Control",
+        "source_severity": "high",
+        "source_severity_raw": "HIGH",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "7.1",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:H/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "likely",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Use DRF’s strict JSON parser or custom parser that rejects duplicate keys. 2. Implement field allowlisting at the serializer level so duplicate injection has no effect regardless of key ordering.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "mass-assignment-tester",
+        "report_finding": 25,
+        "endpoint_as_reported": "/party/create-customer/"
+      }
+    },
+    {
+      "finding_id": "fnd_5924550abbf49027",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:http://192.168.100.10:8000/party/export_merchant_master_list/:POST:-:CWE-287",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-27",
+        "native_family": "business-logic-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "http://192.168.100.10:8000/party/export_merchant_master_list/",
+        "method": "POST",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "HIGH: Customer/Merchant Export Endpoints Accessible Without Authentication",
+        "cwe": [
+          "CWE-287"
+        ],
+        "owasp": "A07:2021 - Identification and Authentication Failures",
+        "source_severity": "high",
+        "source_severity_raw": "HIGH",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": []
+      },
+      "validation": {
+        "confidence": "likely",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Require authentication and authorization on all export endpoints. 2. Implement rate limiting on export endpoints (max exports per day per user). 3. Log all export operations with user, timestamp, and IP. 4. Require additional confirmation (2FA/email approval) for bulk data exports. 5. Implement data masking for sensitive fields in exports.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "business-logic-tester",
+        "report_finding": 27,
+        "endpoint_as_reported": "http://192.168.100.10:8000/party/export_merchant_master_list/ and /party/export_customer_master_list/"
+      }
+    },
+    {
+      "finding_id": "fnd_d96ed27459ad7f33",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://erp.fintec.solutions/:GET:apiUrl:CWE-798",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-30",
+        "native_family": "ssti-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://erp.fintec.solutions/",
+        "method": "GET",
+        "parameters": [
+          "apiUrl"
+        ],
+        "parameter_location": null,
+        "parameter_raw": "apiUrl"
+      },
+      "classification": {
+        "title": "Internal Backend API URL Hardcoded in JS Bundle",
+        "cwe": [
+          "CWE-798"
+        ],
+        "owasp": "A04:2021 - Insecure Design",
+        "source_severity": "high",
+        "source_severity_raw": "HIGH",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": []
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script",
+          "response body not captured"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Move API URL to server-side configuration, use relative paths or environment-specific builds with proxy.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "ssti-tester",
+        "report_finding": 30,
+        "endpoint_as_reported": "/"
+      }
+    },
+    {
+      "finding_id": "fnd_c13b2c75bd9c6680",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://erp.fintec.solutions/chunk-NRGHIUE2.js:GET:-:CWE-798",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-31",
+        "native_family": "business-logic-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://erp.fintec.solutions/chunk-NRGHIUE2.js",
+        "method": "GET",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "CRITICAL: Internal Backend IP Address Hardcoded in Public JavaScript Bundle",
+        "cwe": [
+          "CWE-798"
+        ],
+        "owasp": "A04:2021 - Insecure Design",
+        "source_severity": "high",
+        "source_severity_raw": "HIGH",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": []
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Use environment-specific build configurations that inject API URLs at deploy time (not hardcoded). 2. Use relative API paths proxied through the public-facing server, not direct internal IP. 3. Set up nginx reverse proxy: all /api/* requests proxied to the internal backend. 4. Never hardcode internal IPs, hostnames, or ports in client-side code. 5. Immediately rotate any secrets associated with the exposed backend.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "business-logic-tester",
+        "report_finding": 31,
+        "endpoint_as_reported": "https://erp.fintec.solutions/chunk-NRGHIUE2.js",
+        "also_reported_as": [
+          {
+            "report_finding": 42,
+            "title": "Medium: Internal Backend URL Hardcoded in Public JavaScript Bundle"
+          },
+          {
+            "report_finding": 45,
+            "title": "Internal Backend API URL Hardcoded in Public JavaScript Bundle"
+          }
+        ]
+      }
+    },
+    {
+      "finding_id": "fnd_15e3eb94f6e91dbd",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:http://192.168.100.10:8000/auth/login/:POST:-:CWE-1000",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-32",
+        "native_family": "business-logic-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "http://192.168.100.10:8000/auth/login/",
+        "method": "POST",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "HIGH: Login Endpoint Sends Credentials to Internal HTTP URL Without TLS",
+        "cwe": [
+          "CWE-1000"
+        ],
+        "owasp": "A02:2021 - Cryptographic Failures",
+        "source_severity": "high",
+        "source_severity_raw": "HIGH",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": []
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Mandate HTTPS for ALL communications — use the public-facing HTTPS URL for API calls. 2. Configure nginx to proxy API calls from https://erp.fintec.solutions/api/ to the backend. 3. The backend server should also have TLS configured. 4. Use HSTS headers to prevent HTTP downgrade attacks. 5. Never use HTTP for authentication endpoints in production.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "business-logic-tester",
+        "report_finding": 32,
+        "endpoint_as_reported": "http://192.168.100.10:8000/auth/login/ (HTTP, not HTTPS)"
+      }
+    },
+    {
+      "finding_id": "fnd_edd421ccbfeb3f57",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://erp.fintec.solutions/auth/role-access/:GET:-:CWE-1000",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-33",
+        "native_family": "business-logic-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://erp.fintec.solutions/auth/role-access/",
+        "method": "GET",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "Untitled Mirror finding on GET /auth/role-access/",
+        "cwe": [
+          "CWE-1000"
+        ],
+        "owasp": "A01:2021 - Broken Access Control",
+        "source_severity": "high",
+        "source_severity_raw": "HIGH",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": []
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script",
+          "response body not captured"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Never store role/permission data in localStorage. 2. Implement server-side role checks on EVERY API endpoint. 3. Role access data must come from a validated server-side session. 4. If caching is required, use HttpOnly session cookies managed by the server. 5. Add server-side enforcement for all approval/admin workflows — the UI should be informational only, not the security gate. Medium Findings",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "business-logic-tester",
+        "report_finding": 33,
+        "endpoint_as_reported": "/auth/role-access/ → localStorage['roleAccessData']"
+      }
+    },
+    {
+      "finding_id": "fnd_b2980cca7baba105",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://erp.fintec.solutions/transaction/loan-details-transactions/:GET:loanId:CWE-79",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-34",
+        "native_family": "xss-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://erp.fintec.solutions/transaction/loan-details-transactions/",
+        "method": "GET",
+        "parameters": [
+          "loanId"
+        ],
+        "parameter_location": null,
+        "parameter_raw": "loanId (route param), documentViewerUrl"
+      },
+      "classification": {
+        "title": "DOM XSS Sink: innerHTML Used with Dynamic Data in Angular Application",
+        "cwe": [
+          "CWE-79"
+        ],
+        "owasp": "A03:2021 - Injection",
+        "source_severity": "medium",
+        "source_severity_raw": "MEDIUM",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "6.1",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "likely",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script",
+          "response body not captured"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Replace innerHTML assignments with textContent for plain text data. 2. If HTML rendering is required, use Angular’s [innerHTML] binding with DOMPurify sanitization. 3. Validate and sanitize route parameters before use in DOM operations. 4. Remove bypassSecurityTrustResourceUrl and validate URL schemes. 5. Implement a strict Content-Security-Policy header.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "xss-tester",
+        "report_finding": 34,
+        "endpoint_as_reported": "/transaction/loan-details-transactions/"
+      }
+    },
+    {
+      "finding_id": "fnd_8aa8004b82cd4b01",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://erp.fintec.solutions/:GET:fragment:CWE-79",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-35",
+        "native_family": "xss-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://erp.fintec.solutions/",
+        "method": "GET",
+        "parameters": [
+          "fragment"
+        ],
+        "parameter_location": null,
+        "parameter_raw": "fragment (hash)"
+      },
+      "classification": {
+        "title": "Potential DOM XSS via URL Fragment (Hash) in Angular Router",
+        "cwe": [
+          "CWE-79"
+        ],
+        "owasp": "A03:2021 - Injection",
+        "source_severity": "medium",
+        "source_severity_raw": "MEDIUM",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "6.1",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script",
+          "response body not captured"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Avoid using innerHTML with route parameters. 2. Use Angular’s textContent binding. 3. Validate all router params.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "xss-tester",
+        "report_finding": 35,
+        "endpoint_as_reported": "/#"
+      }
+    },
+    {
+      "finding_id": "fnd_3c4ffcb6585e7a66",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:http://192.168.100.10:8000/auth/refresh_token/:POST:-:CWE-352",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-36",
+        "native_family": "csrf-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "http://192.168.100.10:8000/auth/refresh_token/",
+        "method": "POST",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "Fetch API Uses credentials:“include” for Token Refresh — CSRF Risk if Backend CORS is Misconfigured",
+        "cwe": [
+          "CWE-352"
+        ],
+        "owasp": "A05:2021 - Security Misconfiguration",
+        "source_severity": "medium",
+        "source_severity_raw": "MEDIUM",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "5.9",
+            "vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:L/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "likely",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "full",
+        "evidence_gaps": []
+      },
+      "remediation_source": {
+        "text": "1. DJANGO CORS (PRIMARY): Set CORS_ALLOW_ALL_ORIGINS=False and use an allowlist of known origins. Never combine CORS_ALLOW_ALL_ORIGINS=True with CORS_ALLOW_CREDENTIALS=True. 2. REMOVE credentials:“include”: The refresh_token endpoint does not need cookie credentials — only the Bearer token is required. Remove credentials:“include” from the fetch() call. 3. USE SameSite=Strict on any Django session cookies to prevent them being sent cross-origin even if credentials:include is used.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "csrf-tester",
+        "report_finding": 36,
+        "endpoint_as_reported": "http://192.168.100.10:8000/auth/refresh_token/"
+      }
+    },
+    {
+      "finding_id": "fnd_4af7077bf27615f5",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://erp.fintec.solutions/auth/login/:POST:-:CWE-79",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-37",
+        "native_family": "mass-assignment-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://erp.fintec.solutions/auth/login/",
+        "method": "POST",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "Medium: Bearer Token Stored in localStorage (XSS-Accessible)",
+        "cwe": [
+          "CWE-79"
+        ],
+        "owasp": "A03:2021 - Injection",
+        "source_severity": "medium",
+        "source_severity_raw": "MEDIUM",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "5.4",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "untested",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "full",
+        "evidence_gaps": []
+      },
+      "remediation_source": {
+        "text": "1. Store tokens in HttpOnly cookies instead of localStorage. 2. Set Secure, SameSite=Strict cookie flags. 3. Implement Content Security Policy (CSP) to reduce XSS attack surface.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "mass-assignment-tester",
+        "report_finding": 37,
+        "endpoint_as_reported": "/auth/login/"
+      }
+    },
+    {
+      "finding_id": "fnd_8e4ad173d0c32930",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://192.168.100.10:8000/auth/refresh_token/:POST:-:CWE-347",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-39",
+        "native_family": "authentication-jwt-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://192.168.100.10:8000/auth/refresh_token/",
+        "method": "POST",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": "Authorization Bearer token"
+      },
+      "classification": {
+        "title": "No JWT Token Binding: Tokens Replayable from Any Device Without Revocation",
+        "cwe": [
+          "CWE-347"
+        ],
+        "owasp": "A07:2021 - Identification and Authentication Failures",
+        "source_severity": "medium",
+        "source_severity_raw": "MEDIUM",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "5.4",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:L/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Implement server-side token revocation (Redis blacklist or database jti tracking). 2. Add DPoP binding (RFC 9449). 3. Set short token TTL (15-30 min). 4. Implement refresh token rotation with reuse detection. 5. Store refresh tokens in HttpOnly cookies.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "authentication-jwt-tester",
+        "report_finding": 39,
+        "endpoint_as_reported": "/auth/refresh_token/"
+      }
+    },
+    {
+      "finding_id": "fnd_5d443a18233ea380",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://erp.fintec.solutions/transaction/upload-attachment/:GET:-:CWE-1000",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-40",
+        "native_family": "file-upload-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://erp.fintec.solutions/transaction/upload-attachment/",
+        "method": "GET",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "Client-Side Only File Type Validation on Upload Endpoints",
+        "cwe": [
+          "CWE-1000"
+        ],
+        "owasp": "A04:2021 - Insecure Design",
+        "source_severity": "medium",
+        "source_severity_raw": "MEDIUM",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "5.4",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script",
+          "response body not captured"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Implement server-side file type validation using magic bytes (not just extension/MIME). 2. Use a file type library like python-magic to verify actual file content. 3. Maintain a strict server-side allowlist of permitted file types. 4. Convert risky formats: SVG to PNG, strip macros from Office documents. 5. Scan all uploads with antivirus before storing. 6. Store files with randomized names and no extension hints.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "file-upload-tester",
+        "report_finding": 40,
+        "endpoint_as_reported": "/transaction/upload-attachment/"
+      }
+    },
+    {
+      "finding_id": "fnd_8d158e55391a7aff",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://erp.fintec.solutions/:GET:document_url:CWE-1000",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-41",
+        "native_family": "xss-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://erp.fintec.solutions/",
+        "method": "GET",
+        "parameters": [
+          "document_url"
+        ],
+        "parameter_location": null,
+        "parameter_raw": "document_url (API response field)"
+      },
+      "classification": {
+        "title": "Angular bypassSecurityTrustResourceUrl in Document Viewer with User-Controlled URL",
+        "cwe": [
+          "CWE-1000"
+        ],
+        "owasp": "A04:2021 - Insecure Design",
+        "source_severity": "medium",
+        "source_severity_raw": "MEDIUM",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "5.4",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:R/S:C/C:L/I:L/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "likely",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Do not use bypassSecurityTrustResourceUrl() - use DomSanitizer.sanitize(SecurityContext.URL, url) instead. 2. Implement a server-side URL allowlist restricted to trusted document storage domains (e.g., esarwastorage.blob.core.windows.net). 3. Add CSP frame-src directive to restrict iframe document sources. 4. Validate document URLs server-side before storing in the database.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "xss-tester",
+        "report_finding": 41,
+        "endpoint_as_reported": "/"
+      }
+    },
+    {
+      "finding_id": "fnd_8ea0e57b49f93dc7",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://erp.fintec.solutions/api/v0/:GET:-:CWE-1000",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-43",
+        "native_family": "api-security-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://erp.fintec.solutions/api/v0/",
+        "method": "GET",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "Improper API Versioning — All Version Paths Return 200 via Angular Catch-All Route",
+        "cwe": [
+          "CWE-1000"
+        ],
+        "owasp": "A04:2021 - Insecure Design",
+        "source_severity": "medium",
+        "source_severity_raw": "MEDIUM",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "5.3",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Configure nginx to return 404 for paths that are not valid SPA routes or static assets. 2. Maintain a documented API version inventory. 3. Decommission deprecated API versions at the backend. 4. Apply uniform security controls across all API versions.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "api-security-tester",
+        "report_finding": 43,
+        "endpoint_as_reported": "/api/v0/"
+      }
+    },
+    {
+      "finding_id": "fnd_69365fde2c21e35d",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://erp.fintec.solutions/:GET:-:CWE-200",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-44",
+        "native_family": "api-security-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://erp.fintec.solutions/",
+        "method": "GET",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "No Rate Limiting on Frontend Static Endpoints — Enumeration and Scraping Risk",
+        "cwe": [
+          "CWE-200"
+        ],
+        "owasp": "A05:2021 - Security Misconfiguration",
+        "source_severity": "medium",
+        "source_severity_raw": "MEDIUM",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "5.3",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Configure nginx rate limiting: limit_req_zone $binary_remote_addr zone=static:10m rate=60r/m; limit_req zone=static burst=20 nodelay; limit_req_status 429; Return 429 with Retry-After header.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "api-security-tester",
+        "report_finding": 44,
+        "endpoint_as_reported": "/"
+      }
+    },
+    {
+      "finding_id": "fnd_0177a92a614b662d",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://192.168.100.10:8000/auth/login/:POST:ip,loc,portal_type:CWE-1000",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-48",
+        "native_family": "authentication-jwt-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://192.168.100.10:8000/auth/login/",
+        "method": "POST",
+        "parameters": [
+          "ip",
+          "loc",
+          "portal_type"
+        ],
+        "parameter_location": null,
+        "parameter_raw": "ip, loc, portal_type"
+      },
+      "classification": {
+        "title": "Login Payload Transmits User Geolocation via Third-Party API Without Consent",
+        "cwe": [
+          "CWE-1000"
+        ],
+        "owasp": "A04:2021 - Insecure Design",
+        "source_severity": "medium",
+        "source_severity_raw": "MEDIUM",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "5.3",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Remove geolocation from login flow. 2. Derive IP server-side. 3. Add consent for location collection. 4. Validate and whitelist portal_type values server-side.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "authentication-jwt-tester",
+        "report_finding": 48,
+        "endpoint_as_reported": "/auth/login/"
+      }
+    },
+    {
+      "finding_id": "fnd_5a9ca53ec0229fde",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://erp.fintec.solutions/:GET:-:CWE-287",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-50",
+        "native_family": "path-traversal-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://erp.fintec.solutions/",
+        "method": "GET",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": "N/A"
+      },
+      "classification": {
+        "title": "The Angular SPA bundles expose 284 unique API endpoint paths including authentication endpoints (/auth/login/, /auth/rol",
+        "cwe": [
+          "CWE-287"
+        ],
+        "owasp": "A07:2021 - Identification and Authentication Failures",
+        "source_severity": "medium",
+        "source_severity_raw": "MEDIUM",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "5.3",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "confirmed",
+        "confidence_source": "tool_asserted",
+        "reproduced": true,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script",
+          "response body not captured"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. While full obfuscation is not always practical for SPAs, ensure all API endpoints enforce proper authentication and authorization. 2. Implement rate limiting on authentication endpoints. 3. Consider using API gateway to centralize authorization checks.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "path-traversal-tester",
+        "report_finding": 50,
+        "endpoint_as_reported": "https://erp.fintec.solutions/"
+      }
+    },
+    {
+      "finding_id": "fnd_fdcd4b10483bbb20",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://erp.fintec.solutions/chunk-NRGHIUE2.js:GET:-:CWE-200",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-51",
+        "native_family": "sql-injection-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://erp.fintec.solutions/chunk-NRGHIUE2.js",
+        "method": "GET",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": "N/A"
+      },
+      "classification": {
+        "title": "Information Disclosure",
+        "cwe": [
+          "CWE-200"
+        ],
+        "owasp": "A05:2021 - Security Misconfiguration",
+        "source_severity": "medium",
+        "source_severity_raw": "MEDIUM",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "5.3",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Use public domain as API base URL via nginx proxy. 2. Switch Django to Gunicorn/uWSGI. Enable HTTPS on internal communication. 3. Restrict Django to localhost-only connections.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "sql-injection-tester",
+        "report_finding": 51,
+        "endpoint_as_reported": "/chunk-NRGHIUE2.js"
+      }
+    },
+    {
+      "finding_id": "fnd_9a336053062409b9",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://erp.fintec.solutions/chunk-NRGHIUE2.js:GET:apiUrl:CWE-79",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-53",
+        "native_family": "xss-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://erp.fintec.solutions/chunk-NRGHIUE2.js",
+        "method": "GET",
+        "parameters": [
+          "apiUrl"
+        ],
+        "parameter_location": null,
+        "parameter_raw": "apiUrl (JavaScript environment variable)"
+      },
+      "classification": {
+        "title": "Internal API URL Hardcoded in Public JavaScript Bundle (Mixed Content XSS Surface)",
+        "cwe": [
+          "CWE-79"
+        ],
+        "owasp": "A03:2021 - Injection",
+        "source_severity": "medium",
+        "source_severity_raw": "MEDIUM",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "5.3",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Configure nginx to proxy the internal API over HTTPS using a relative path (e.g., /api/ -> http://192.168.100.10:8000/api/). 2. Change the Angular environment apiUrl to a relative path ‘/api/’ or an HTTPS URL. 3. 3. Rebuild and redeploy the Angular application with the corrected environment configuration. 4. Enable HTTPS on the Django backend or ensure it is only accessible via the nginx proxy.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "xss-tester",
+        "report_finding": 53,
+        "endpoint_as_reported": "/chunk-NRGHIUE2.js"
+      }
+    },
+    {
+      "finding_id": "fnd_c48e4c46d96f8f06",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://erp.fintec.solutions/dashboard:GET:-:CWE-1000",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-55",
+        "native_family": "bfla-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://erp.fintec.solutions/dashboard",
+        "method": "GET",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "Unauthenticated Access to Financial Dashboard Route — Missing Route Guard on /dashboard",
+        "cwe": [
+          "CWE-1000"
+        ],
+        "owasp": "A04:2021 - Insecure Design",
+        "source_severity": "medium",
+        "source_severity_raw": "MEDIUM",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": []
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "response body not captured"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Apply the Angular AuthGuard to the /dashboard route in the route configuration. 2. Verify all routes in the router module have canActivate: [AuthGuard] applied.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "bfla-tester",
+        "report_finding": 55,
+        "endpoint_as_reported": "/dashboard"
+      }
+    },
+    {
+      "finding_id": "fnd_7ea94daf9aaaa8a3",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:http://192.168.100.10:8000/admin/:POST:-:CWE-352",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-57",
+        "native_family": "csrf-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "http://192.168.100.10:8000/admin/",
+        "method": "POST",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "Django Admin and DRF Session Auth — CSRF Risk on Internal Backend (http://192.168.100.10:8000)",
+        "cwe": [
+          "CWE-352"
+        ],
+        "owasp": "A07:2021 - Identification and Authentication Failures",
+        "source_severity": "medium",
+        "source_severity_raw": "MEDIUM",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": []
+      },
+      "validation": {
+        "confidence": "likely",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Configure Django REST Framework with TokenAuthentication ONLY: AUTHENTICATION_CLASSES = [‘rest_framework.authentication.JWTAuthentication’]. Remove SessionAuthentication to eliminate cookie-based auth for API endpoints. 2. Verify Django’s CsrfViewMiddleware is active and NOT globally exempted via settings.CSRF_TRUSTED_ORIGINS and middleware ordering. 3. If SessionAuthentication must remain, enforce CSRF tokens on all state-changing DRF views using CsrfExemptSessionAuthentication replacement. 4. Set SameSite=Strict on the Django session cookie (SESSION_COOKIE_SAMESITE=‘Strict’).",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "csrf-tester",
+        "report_finding": 57,
+        "endpoint_as_reported": "http://192.168.100.10:8000/admin/"
+      }
+    },
+    {
+      "finding_id": "fnd_cbf2ab21d5392555",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://bnpl-ui-prod.fintec.solutions/public/api/login:GET:-:CWE-1000",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-58",
+        "native_family": "idor-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_bnpl-ui-prod",
+        "url": "https://bnpl-ui-prod.fintec.solutions/public/api/login",
+        "method": "GET",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "Sensitive System Configuration Exposed via Unauthenticated Public API",
+        "cwe": [
+          "CWE-1000"
+        ],
+        "owasp": "A04:2021 - Insecure Design",
+        "source_severity": "medium",
+        "source_severity_raw": "MEDIUM",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": []
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": null,
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "idor-tester",
+        "report_finding": 58,
+        "endpoint_as_reported": "/public/api/login"
+      }
+    },
+    {
+      "finding_id": "fnd_9138c740d93a2592",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://erp.fintec.solutions/chunk-IIOHNQ7G.js:GET:-:CWE-347",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-60",
+        "native_family": "authentication-jwt-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://erp.fintec.solutions/chunk-IIOHNQ7G.js",
+        "method": "GET",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": "localStorage keys"
+      },
+      "classification": {
+        "title": "JWT Tokens and Sensitive Data Stored in localStorage",
+        "cwe": [
+          "CWE-347"
+        ],
+        "owasp": "A07:2021 - Identification and Authentication Failures",
+        "source_severity": "low",
+        "source_severity_raw": "LOW",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "5.4",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:L/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "untested",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Store JWT tokens in HttpOnly, Secure, SameSite=Strict cookies instead of localStorage. 2. This prevents JavaScript from accessing the token even if XSS occurs.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "authentication-jwt-tester",
+        "report_finding": 60,
+        "endpoint_as_reported": "/chunk-IIOHNQ7G.js"
+      }
+    },
+    {
+      "finding_id": "fnd_1b9516be22347563",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://erp.fintec.solutions/chunk-GDMO62KO.js:GET:-:CWE-1000",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-61",
+        "native_family": "path-traversal-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://erp.fintec.solutions/chunk-GDMO62KO.js",
+        "method": "GET",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": "N/A"
+      },
+      "classification": {
+        "title": "The Angular JavaScript bundle exposes the Azure Blob Storage account name ‘esarwastorage’ and a company logo URL path st",
+        "cwe": [
+          "CWE-1000"
+        ],
+        "owasp": "A04:2021 - Insecure Design",
+        "source_severity": "low",
+        "source_severity_raw": "LOW",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "3.7",
+            "vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Configure Azure Blob Storage containers with private access. 2. Use SAS tokens with short expiry for file access. 3. Use a CDN or proxy to hide the Azure storage account name from end users.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "path-traversal-tester",
+        "report_finding": 61,
+        "endpoint_as_reported": "https://erp.fintec.solutions/chunk-GDMO62KO.js"
+      }
+    },
+    {
+      "finding_id": "fnd_83847c5f92816615",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://erp.fintec.solutions/:GET:-:CWE-693",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-62",
+        "native_family": "file-upload-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://erp.fintec.solutions/",
+        "method": "GET",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "Missing Security Headers",
+        "cwe": [
+          "CWE-693"
+        ],
+        "owasp": "A05:2021 - Security Misconfiguration",
+        "source_severity": "low",
+        "source_severity_raw": "LOW",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "3.7",
+            "vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": null,
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "file-upload-tester",
+        "report_finding": 62,
+        "endpoint_as_reported": "/"
+      }
+    },
+    {
+      "finding_id": "fnd_4c4cb0283905535a",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://erp.fintec.solutions/:GET:-:CWE-79",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-63",
+        "native_family": "file-upload-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://erp.fintec.solutions/",
+        "method": "GET",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "Missing Content-Security-Policy Header Enables XSS Risk",
+        "cwe": [
+          "CWE-79"
+        ],
+        "owasp": "A03:2021 - Injection",
+        "source_severity": "low",
+        "source_severity_raw": "LOW",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "3.7",
+            "vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Implement strict Content-Security-Policy header. 2. Add Referrer-Policy: strict-origin-when-cross-origin. 3. Add Permissions-Policy to restrict browser features. 4. Configure nginx to add security headers to all responses.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "file-upload-tester",
+        "report_finding": 63,
+        "endpoint_as_reported": "/"
+      }
+    },
+    {
+      "finding_id": "fnd_d75e37725cec3370",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://erp.fintec.solutions/:GET:-:CWE-1000",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-64",
+        "native_family": "api-security-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://erp.fintec.solutions/",
+        "method": "GET",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "Web Server Version Disclosed in HTTP Response Header — Legacy nginx 1.18.0",
+        "cwe": [
+          "CWE-1000"
+        ],
+        "owasp": "A04:2021 - Insecure Design",
+        "source_severity": "low",
+        "source_severity_raw": "LOW",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "3.1",
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Add ‘server_tokens off;’ to nginx.conf in the http block. 2. Consider upgrading nginx to the current stable release (1.24.x or 1.26.x). 3. If version disclosure is required, use a generic server identifier.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "api-security-tester",
+        "report_finding": 64,
+        "endpoint_as_reported": "/",
+        "also_reported_as": [
+          {
+            "report_finding": 68,
+            "title": "Web Server Version Disclosure via Server Header"
+          }
+        ]
+      }
+    },
+    {
+      "finding_id": "fnd_f255aaf985063183",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://erp.fintec.solutions/assets/Excel/BNPL_LoanTransactionsReport.View.xlsx:GET:-:CWE-287",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-65",
+        "native_family": "path-traversal-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://erp.fintec.solutions/assets/Excel/BNPL_LoanTransactionsReport.View.xlsx",
+        "method": "GET",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": "N/A"
+      },
+      "classification": {
+        "title": "The Excel template file BNPL_LoanTransactionsReport.View.xlsx is publicly accessible without authentication at /assets/E",
+        "cwe": [
+          "CWE-287"
+        ],
+        "owasp": "A07:2021 - Identification and Authentication Failures",
+        "source_severity": "low",
+        "source_severity_raw": "LOW",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "mirror",
+            "version": "3.1",
+            "base": "3.1",
+            "vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:L/I:N/A:N"
+          }
+        ]
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. Move report templates behind authentication or to the backend server. 2. Static assets served from /assets/ should only include non-sensitive UI resources.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "path-traversal-tester",
+        "report_finding": 65,
+        "endpoint_as_reported": "https://erp.fintec.solutions/assets/Excel/BNPL_LoanTransactionsReport.View.xlsx"
+      }
+    },
+    {
+      "finding_id": "fnd_8cd663b4447456c5",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://erp.fintec.solutions/:OPTIONS:-:CWE-942",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-66",
+        "native_family": "cors-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://erp.fintec.solutions/",
+        "method": "OPTIONS",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "nginx Rejects CORS Preflight Requests (HTTP 405) — No CORS Policy on Frontend",
+        "cwe": [
+          "CWE-942"
+        ],
+        "owasp": "A05:2021 - Security Misconfiguration",
+        "source_severity": "low",
+        "source_severity_raw": "LOW",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": []
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. No remediation required at the nginx layer for CORS headers. 2. Maintain the existing security headers (HSTS, X-Frame-Options, X-Content-Type-Options). 3. Consider proxying API calls through nginx to centralize CORS policy management.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "cors-tester",
+        "report_finding": 66,
+        "endpoint_as_reported": "https://erp.fintec.solutions/ (all tested paths)"
+      }
+    },
+    {
+      "finding_id": "fnd_d413f136f9259ad6",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://erp.fintec.solutions/:GET:-:CWE-352",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-67",
+        "native_family": "csrf-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://erp.fintec.solutions/",
+        "method": "GET",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "No CSRF Token or Angular XSRF Interceptor Configured — Reliance Solely on Bearer Token Architecture",
+        "cwe": [
+          "CWE-352"
+        ],
+        "owasp": "A04:2021 - Insecure Design",
+        "source_severity": "low",
+        "source_severity_raw": "LOW",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": []
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. While CSRF is currently mitigated by the Bearer token architecture, add defense in depth: 2. Configure Angular’s HttpClientXsrfModule (imports HttpClientXsrfModule in AppModule) to automatically add X-XSRF-TOKEN headers from a Django-set csrftoken cookie. 3. Ensure Django REST Framework is configured with SessionAuthentication disabled or restricted to localhost, so cookie-based auth cannot be inadvertently used. 4. Enable Django’s CsrfViewMiddleware even for DRF endpoints as defense-in-depth using @ensure_csrf_cookie on login views.",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "csrf-tester",
+        "report_finding": 67,
+        "endpoint_as_reported": "https://erp.fintec.solutions/ (Angular SPA)"
+      }
+    },
+    {
+      "finding_id": "fnd_344b045663a56410",
+      "idempotency_key": "mirror:scan_mirror_afd57ac3:https://erp.fintec.solutions/graphql:GET:-:CWE-200",
+      "source": {
+        "tool": "mirror",
+        "native_id": "afd57ac3-70",
+        "native_family": "graphql-tester",
+        "scan_id": "scan_mirror_afd57ac3",
+        "scan_type": "dast_agentic",
+        "first_detected": "2026-08-18T22:01:00+00:00",
+        "last_detected": "2026-08-18T22:01:00+00:00"
+      },
+      "locus": {
+        "type": "endpoint",
+        "asset_ref": "ast_erp-fintec-solutions",
+        "url": "https://erp.fintec.solutions/graphql",
+        "method": "GET",
+        "parameters": [],
+        "parameter_location": null,
+        "parameter_raw": null
+      },
+      "classification": {
+        "title": "No GraphQL API Detected on Target",
+        "cwe": [
+          "CWE-200"
+        ],
+        "owasp": "A04:2021 - Insecure Design",
+        "source_severity": "info",
+        "source_severity_raw": "INFO",
+        "inferred_mappings": [
+          "cwe",
+          "owasp"
+        ]
+      },
+      "scores": {
+        "cvss": []
+      },
+      "validation": {
+        "confidence": "potential",
+        "confidence_source": "tool_asserted",
+        "reproduced": false,
+        "evidence_completeness": "partial",
+        "evidence_gaps": [
+          "no proof-of-concept script"
+        ]
+      },
+      "remediation_source": {
+        "text": "1. N/A - GraphQL is not in use. 2. Continue REST API security testing separately. Regulatory Compliance Mapping Findings are mapped to the OWASP Top 10 (2021) and to the Common Weakness Enumeration. A mapping marked (inferred) was derived from the finding rather than asserted by the testing agent — the tag is there so the distinction is visible rather than assumed. OWASP Top 10 (2021) Category Findings Highest severity A02:2021 - Cryptographic Failures (inferred) 2 Critical A03:2021 - Injection (inferred) 9 Critical A04:2021 - Insecure Design (inferred) 30 Critical A07:2021 - Identification and Authentication Failures (inferred) 16 Critical A01:2021 - Broken Access Control (inferred) 7 High A05:2021 - Security Misconfiguration (inferred) 6 High Common Weakness Enumeration CWE Findings Highest severity CWE-1000 (inferred) 29 Critical CWE-287 (inferred) 11 Critical CWE-89 (inferred) 1 Critical CWE-269 (inferred) 1 High CWE-639 (inferred) 1 High CWE-79 (inferred) 6 High CWE-798 (inferred)",
+        "provided_by": "mirror"
+      },
+      "evidence": {
+        "references": [],
+        "mirror_agent": "graphql-tester",
+        "report_finding": 70,
+        "endpoint_as_reported": "https://erp.fintec.solutions/graphql"
+      }
+    }
+  ]
+}

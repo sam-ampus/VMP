@@ -53,6 +53,7 @@ class FixStatus(StrEnum):
     FIX_DEFERRED = "fix_deferred"
     END_OF_LIFE = "end_of_life"
     NOT_AFFECTED = "not_affected"
+    UNDER_INVESTIGATION = "under_investigation"
     UNKNOWN = "unknown"
 
 

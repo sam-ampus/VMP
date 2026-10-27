@@ -4,7 +4,8 @@
     "vulnerability_id removed from every finding: a Finding is immutable and is linked to its Vulnerability by the Vulnerability record, after correlation.",
     "cvss_selected removed from every finding. Locked decision 1's precedence (NVD, then CNA, then tool) needs enrichment, so selection runs after ingest (vmp.pipeline.cvss), not in the Finding. Checked against live NVD on 2026-10-12: CVE-2024-28248 is scored 7.2 by NVD and by its CNA (GitHub), so it selects NVD 7.2; Trivy's 'ghsa' 6.5 is not the CNA record's score.",
     "fnd_e90bb7: free-text parameter 'email, password (JSON body)' split into parameters [email, password] + parameter_location body; original kept in parameter_raw.",
-    "fnd_e90bb7: idempotency_key uses the full url as the spec format (tool:scan_id:url:method:parameter) says; the original used the path only."
+    "fnd_e90bb7: idempotency_key uses the full url as the spec format (tool:scan_id:url:method:parameter) says; the original used the path only.",
+    "fnd_e90bb7: idempotency_key ends with the CWE (2026-10-22): the endpoint key includes cwe, as in locked decision 4, so different weaknesses on one endpoint stay separate findings."
   ],
   "schema_version": "0.1",
   "ingest_batch": {
@@ -137,7 +138,7 @@
     },
     {
       "finding_id": "fnd_e90bb7",
-      "idempotency_key": "mirror:afd57ac3:https://erp.fintec.solutions/auth/login/:POST:email,password",
+      "idempotency_key": "mirror:afd57ac3:https://erp.fintec.solutions/auth/login/:POST:email,password:CWE-89",
       "source": {
         "tool": "mirror",
         "tool_version": "unknown",

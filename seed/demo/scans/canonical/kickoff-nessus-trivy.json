@@ -1,0 +1,164 @@
+{
+  "schema_version": "0.1",
+  "ingest_batch": {
+    "batch_id": "ing_kickoff_fixture",
+    "source_tool": "nessus+trivy",
+    "received_at": "2026-09-30T14:22:10Z"
+  },
+  "findings": [
+    {
+      "finding_id": "fnd_7c2a91",
+      "idempotency_key": "nessus:18405:10.31.112.29:3389:tcp",
+      "source": {
+        "tool": "nessus",
+        "tool_version": "unknown",
+        "native_id": "18405",
+        "native_family": "Windows",
+        "scan_id": "scan_nessus_20130701",
+        "scan_type": "authenticated_network",
+        "first_detected": "2013-07-01T11:33:11Z",
+        "last_detected": "2013-07-01T11:40:48Z",
+        "times_detected": 1
+      },
+      "locus": {
+        "type": "host",
+        "asset_ref": "ast_10-31-112-29",
+        "ip": "10.31.112.29",
+        "hostname": "qa3app09",
+        "port": 3389,
+        "protocol": "tcp",
+        "service": "msrdp",
+        "os": "Microsoft Windows Server 2008 R2 Standard",
+        "cpe": [
+          "cpe:/o:microsoft:windows"
+        ]
+      },
+      "classification": {
+        "title": "Microsoft Windows RDP Server Man-in-the-Middle Weakness",
+        "cve": [
+          "CVE-2005-1794"
+        ],
+        "cwe": [],
+        "owasp": null,
+        "source_severity": "Medium",
+        "source_severity_raw": "2",
+        "inferred_mappings": []
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "nessus",
+            "version": "2.0",
+            "base": 4.3,
+            "vector": "AV:N/AC:M/Au:N/C:P/I:N/A:N"
+          }
+        ],
+        "epss": null,
+        "kev": false
+      },
+      "validation": {
+        "confidence": "unvalidated",
+        "confidence_source": "default_for_tool_class",
+        "reproduced": false,
+        "evidence_completeness": "full"
+      },
+      "exploit_signals": {
+        "exploit_available": true,
+        "exploitability_ease": "Exploits are available",
+        "signal_source": "nessus"
+      },
+      "remediation_source": {
+        "text": "Force the use of SSL as a transport layer for this service.",
+        "provided_by": "nessus"
+      },
+      "evidence": {
+        "plugin_output": null,
+        "references": [
+          "OSVDB:17131",
+          "BID:13818"
+        ]
+      }
+    },
+    {
+      "finding_id": "fnd_a41f03",
+      "idempotency_key": "trivy:CVE-2024-28248:pkg:golang/github.com/cilium/cilium@1.14.5",
+      "source": {
+        "tool": "trivy",
+        "tool_version": "0.50.1",
+        "native_id": "CVE-2024-28248",
+        "native_family": "ghsa",
+        "scan_id": "scan_trivy_k-client",
+        "scan_type": "sca",
+        "first_detected": "2026-09-28T09:00:00Z",
+        "last_detected": "2026-09-28T09:00:00Z",
+        "times_detected": 1
+      },
+      "locus": {
+        "type": "package",
+        "asset_ref": "ast_k-client-image",
+        "package_name": "github.com/cilium/cilium",
+        "package_id": "github.com/cilium/cilium@v1.14.5",
+        "purl": "pkg:golang/github.com/cilium/cilium@1.14.5",
+        "installed_version": "1.14.5",
+        "fixed_version": [
+          "1.13.13",
+          "1.14.8",
+          "1.15.2"
+        ],
+        "fix_status": "fixed"
+      },
+      "classification": {
+        "title": "Intermittent HTTP policy bypass",
+        "cve": [
+          "CVE-2024-28248"
+        ],
+        "cwe": [
+          "CWE-693"
+        ],
+        "owasp": null,
+        "source_severity": "High",
+        "source_severity_raw": "HIGH",
+        "inferred_mappings": []
+      },
+      "scores": {
+        "cvss": [
+          {
+            "source": "bitnami",
+            "version": "3.1",
+            "base": 7.2,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:L/I:L/A:N"
+          },
+          {
+            "source": "ghsa",
+            "version": "3.1",
+            "base": 6.5,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N"
+          }
+        ],
+        "epss": 0.0042,
+        "kev": false
+      },
+      "validation": {
+        "confidence": "unvalidated",
+        "confidence_source": "default_for_tool_class",
+        "reproduced": false,
+        "evidence_completeness": "full"
+      },
+      "exploit_signals": {
+        "exploit_available": null,
+        "exploitability_ease": null,
+        "signal_source": null
+      },
+      "remediation_source": {
+        "text": "Upgrade github.com/cilium/cilium to 1.14.8 or later.",
+        "provided_by": "derived_from_fixed_version"
+      },
+      "evidence": {
+        "data_source": "GitHub Security Advisory Go",
+        "references": [
+          "https://avd.aquasec.com/nvd/cve-2024-28248"
+        ]
+      }
+    }
+  ]
+}

@@ -1,8 +1,10 @@
 """CVSS selection, locked decision 1. Runs after enrichment, when every source is known.
 
-Precedence: OS packages take the distro's score first (distros backport fixes; NVD does not
-track that). Everything else: NVD, then the issuing CNA, then the tool. Within a tier the
-preferred CVSS version wins, then the highest base (conservative), then source name.
+Precedence: OS packages take *their own* distro's score first (distros backport fixes; NVD
+does not track that). Another distro's score is just another tool-reported score: Red Hat's
+rating says nothing about an Alpine package. Everything else: NVD, then the issuing CNA, then
+the tool. Within a tier the preferred CVSS version wins, then the highest base (conservative),
+then source name.
 """
 
 from collections.abc import Sequence
@@ -19,6 +21,13 @@ DISTRO_SOURCES = frozenset({
     "suse-cvrf", "photon", "alpine", "azure", "cbl-mariner",
 })
 OS_PACKAGE_PURL_TYPES = frozenset({"deb", "rpm", "apk"})
+# purl namespace (the distro) -> the vendor source name Trivy reports for that distro.
+_DISTRO_SOURCE = {
+    "debian": "debian", "ubuntu": "ubuntu", "alpine": "alpine", "redhat": "redhat",
+    "centos": "redhat", "rocky": "rocky", "almalinux": "alma", "alma": "alma",
+    "amazon": "amazon", "oracle": "oracle-oval", "photon": "photon", "mariner": "cbl-mariner",
+    "suse": "suse-cvrf", "opensuse": "suse-cvrf", "azurelinux": "azure",
+}
 
 # The weights are calibrated on the v3.x scale, so v3 is preferred over v4.0 when both exist.
 DEFAULT_VERSION_PREFERENCE = (CvssVersion.V3_1, CvssVersion.V3_0, CvssVersion.V4_0,
@@ -36,8 +45,17 @@ def is_os_package(purl: str | None) -> bool:
     return purl is not None and purl.removeprefix("pkg:").split("/", 1)[0] in OS_PACKAGE_PURL_TYPES
 
 
+def distro_of(purl: str | None) -> str | None:
+    """'pkg:apk/alpine/freetype@2.9.1-r2' -> 'alpine'. None for non-OS or unknown distros."""
+    if not is_os_package(purl):
+        return None
+    assert purl is not None
+    parts = purl.removeprefix("pkg:").split("@", 1)[0].split("/")
+    return _DISTRO_SOURCE.get(parts[1].lower()) if len(parts) > 2 else None
+
+
 def select_cvss(
-    tool: Sequence[CvssScore], intel: Sequence[SourcedCvss], *, os_package: bool,
+    tool: Sequence[CvssScore], intel: Sequence[SourcedCvss], *, distro: str | None,
     version_preference: Sequence[CvssVersion] = DEFAULT_VERSION_PREFERENCE,
     contested_spread: Decimal = CONTESTED_SPREAD,
 ) -> CvssSelection | None:
@@ -46,8 +64,8 @@ def select_cvss(
     intel_by_kind = {kind: [c for k, c in intel_c if k is kind] for kind in CvssSourceKind}
 
     tiers: list[tuple[CvssSelectionRule, list[_Candidate]]] = []
-    if os_package:
-        tiers.append((CvssSelectionRule.DISTRO, [c for c in tool_c if c.source in DISTRO_SOURCES]))
+    if distro is not None:
+        tiers.append((CvssSelectionRule.DISTRO, [c for c in tool_c if c.source == distro]))
     tiers += [
         (CvssSelectionRule.NVD, intel_by_kind[CvssSourceKind.NVD]),
         (CvssSelectionRule.CNA, intel_by_kind[CvssSourceKind.CNA]),

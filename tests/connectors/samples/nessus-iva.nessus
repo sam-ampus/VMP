@@ -1,0 +1,76 @@
+<?xml version="1.0" ?>
+<NessusClientData_v2>
+<Policy><policyName>Scan Policy</policyName></Policy>
+<Report name="Example IVA" xmlns:cm="http://www.nessus.org/cm">
+<ReportHost name="192.0.2.20"><HostProperties>
+<tag name="HOST_END_TIMESTAMP">1781000000</tag>
+<tag name="HOST_START_TIMESTAMP">1780990000</tag>
+<tag name="host-ip">192.0.2.20</tag>
+<tag name="host-fqdn">app01.example.com</tag>
+<tag name="netbios-name">APP01</tag>
+<tag name="operating-system">Microsoft Windows Server 2019</tag>
+<tag name="Credentialed_Scan">true</tag>
+</HostProperties>
+<ReportItem port="0" svc_name="general" protocol="tcp" severity="0" pluginID="19506" pluginName="Nessus Scan Information" pluginFamily="Settings">
+<plugin_type>summary</plugin_type><risk_factor>None</risk_factor><solution>n/a</solution><synopsis>Info about the scan.</synopsis><plugin_output>illustrative</plugin_output>
+</ReportItem>
+<ReportItem port="445" svc_name="cifs" protocol="tcp" severity="0" pluginID="11011" pluginName="Microsoft Windows SMB Service Detection" pluginFamily="Windows">
+<plugin_type>remote</plugin_type><risk_factor>None</risk_factor><solution>n/a</solution><synopsis>A file / print sharing service is listening.</synopsis>
+</ReportItem>
+<ReportItem port="443" svc_name="www" protocol="tcp" severity="3" pluginID="200001" pluginName="Example Web Server &lt; 2.4.58 Multiple Vulnerabilities" pluginFamily="Web Servers">
+<cve>CVE-2023-45802</cve>
+<cve>CVE-2023-43622</cve>
+<cwe>400</cwe>
+<cvss_base_score>5.0</cvss_base_score>
+<cvss_vector>CVSS2#AV:N/AC:L/Au:N/C:N/I:N/A:P</cvss_vector>
+<cvss3_base_score>7.5</cvss3_base_score>
+<cvss3_vector>CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H</cvss3_vector>
+<epss_score>0.0123</epss_score>
+<exploit_available>true</exploit_available>
+<exploitability_ease>Exploits are available</exploitability_ease>
+<vpr_score>4.4</vpr_score>
+<cpe>cpe:/a:example:web_server</cpe>
+<see_also>https://example.com/advisory-1
+https://example.com/advisory-2</see_also>
+<xref>IAVA:2023-A-0001</xref>
+<risk_factor>High</risk_factor>
+<solution>Upgrade to version 2.4.58 or later.</solution>
+<synopsis>The remote web server is affected by multiple vulnerabilities.</synopsis>
+<description>Illustrative description.</description>
+<plugin_output>Installed version : 2.4.57
+Fixed version : 2.4.58</plugin_output>
+<plugin_type>remote</plugin_type>
+</ReportItem>
+<ReportItem port="443" svc_name="www" protocol="tcp" severity="3" pluginID="200001" pluginName="Example Web Server &lt; 2.4.58 Multiple Vulnerabilities" pluginFamily="Web Servers">
+<cve>CVE-2023-45802</cve>
+<risk_factor>High</risk_factor>
+<solution>Upgrade to version 2.4.58 or later.</solution>
+<plugin_output>reported a second time</plugin_output>
+</ReportItem>
+<ReportItem port="0" svc_name="general" protocol="icmp" severity="1" pluginID="10114" pluginName="ICMP Timestamp Request Remote Date Disclosure" pluginFamily="General">
+<cve>CVE-1999-0524</cve>
+<cvss_base_score>2.1</cvss_base_score>
+<cvss_vector>CVSS2#AV:L/AC:L/Au:N/C:P/I:N/A:N</cvss_vector>
+<exploit_available>false</exploit_available>
+<risk_factor>Low</risk_factor>
+<solution>Filter out the ICMP timestamp requests (13), and the outgoing ICMP timestamp replies (14).</solution>
+<synopsis>It is possible to determine the exact time set on the remote host.</synopsis>
+</ReportItem>
+</ReportHost>
+<ReportHost name="192.0.2.21"><HostProperties>
+<tag name="HOST_END_TIMESTAMP">1781000500</tag>
+<tag name="host-ip">192.0.2.21</tag>
+<tag name="Credentialed_Scan">false</tag>
+</HostProperties>
+<ReportItem port="22" svc_name="ssh" protocol="tcp" severity="4" pluginID="200002" pluginName="Illustrative SSH Server Critical" pluginFamily="Misc.">
+<cvss4_base_score>9.3</cvss4_base_score>
+<cvss4_vector>CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N</cvss4_vector>
+<cvss3_base_score>9.8</cvss3_base_score>
+<cvss3_vector>CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H</cvss3_vector>
+<risk_factor>Medium</risk_factor>
+<solution>n/a</solution>
+<synopsis>Illustrative.</synopsis>
+</ReportItem>
+</ReportHost>
+</Report>
+</NessusClientData_v2>

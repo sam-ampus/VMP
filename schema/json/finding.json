@@ -285,6 +285,7 @@
         "fix_deferred",
         "end_of_life",
         "not_affected",
+        "under_investigation",
         "unknown"
       ],
       "title": "FixStatus",
@@ -684,6 +685,19 @@
           "default": false,
           "title": "Reproduced",
           "type": "boolean"
+        },
+        "tool_label": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tool Label"
         }
       },
       "required": [

@@ -1,0 +1,7 @@
+asset_ref,name,aliases,internet_facing,criticality,environment,owner
+ast_erp-fintec-solutions,QPay financial ERP (API + web),erp.fintec.solutions;192.168.100.10;192.168.100.10:8000,true,critical,production,Finance applications (mock)
+ast_bnpl-ui-prod,BNPL customer web frontend,bnpl-ui-prod.fintec.solutions,true,high,production,Finance applications (mock)
+ast_10-31-112-29,qa3app09,10.31.112.29;qa3app09,false,medium,non_production,QA infrastructure (mock)
+ast_k-client-image,k-client container image,k-client;registry.local/k-client,false,medium,production,Platform team (mock)
+ast_teamdojo-image,teamdojo container image,teamdojo:latest;teamdojo,false,medium,production,Platform team (mock)
+ast_example-app-image,example-app container image,noppaknopsta/example-app:main-159;noppaknopsta/example-app,true,high,production,Web team (mock)

@@ -5,14 +5,19 @@ description = "VMP Findings Assessment Engine: deterministic, explainable vulner
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
 dependencies = [
+    "defusedxml>=0.7.1",
     "pydantic>=2.9,<3",
 ]
+
+[project.scripts]
+vmp = "vmp.cli:main"
 
 [dependency-groups]
 dev = [
     "pytest>=8.3",
     "ruff>=0.6",
     "mypy>=1.11",
+    "types-defusedxml>=0.7.0.20260504",
 ]
 
 [build-system]

@@ -41,3 +41,28 @@ One line per decision: date, what was decided, why, and where it came from. Newe
 | 2026-10-22 | `RiskAssessment.asset_inventory_id`: content hash of the inventory a score used | Weights + intel + inventory versions together make every score replayable | Step 4 |
 | 2026-10-22 | Identifier normalisation here = lowercase, trim, canonical IP; port and URL handling deferred to endpoint normalisation | Keep locked decision 4 in one place | Step 4 |
 | 2026-10-22 | Mock `seed/demo/assets.csv` moved from step 4 to step 5 | It must match the DefectDojo scans, which are chosen in step 5 | Step 4 |
+| 2026-10-22 | Connectors only translate (native → canonical dict); every connector's output goes through the one `validate_batch()` | A new connector can't weaken the schema rules | Step 5 |
+| 2026-10-22 | Deterministic ids: `finding_id = sha256(scan_id, key)`; scan id from file content when not supplied; clock passed in | Re-ingesting a file is a no-op; runs are byte-identical | Step 5 |
+| 2026-10-22 | Unknown assets ingest as `ast_unresolved_<name>` and score without context | Don't hide findings; don't guess context | Step 5 |
+| 2026-10-22 | Intel beats the tool for KEV/EPSS; the tool's value is the fallback when intel is silent | CISA and FIRST are authoritative; the scanner's copy can be stale | Step 5 |
+| 2026-10-22 | **Endpoint idempotency key now includes CWE** (`tool:scan:url:method:params:cwe`) | Different weaknesses on one endpoint were collapsing; matches locked decision 4's endpoint key | Step 5 (found by the slice) |
+| 2026-10-22 | **Distro CVSS tier uses only the package's own distro** (`select_cvss(distro=…)`, from the purl namespace) | An Alpine package was taking Red Hat's score | Step 5 (found by the slice) |
+| 2026-10-22 | `FixStatus` gains `under_investigation`; Trivy `fixed` with no version maps to `unknown` | Trivy's real vocabulary; don't claim a fix that names no version | Step 5 |
+| 2026-10-22 | Trivy UNKNOWN severity maps to `info`, with the raw value kept | Schema has no "unknown" severity; the raw value stays traceable | Step 5 |
+| 2026-10-22 | Mirror PDF transcribed by script: structured fields only, secrets redacted (refuses to write if any remain); `ALL`/`N/A`-method findings skipped | Report is confidential and contains live keys; never invent a method | Step 5 |
+| 2026-10-22 | DefectDojo samples are BSD-3-Clause (not MIT as noted 2026-10-12); notice shipped alongside | Licence requires the notice | Step 5 |
+| 2026-10-26 | Step 6 built against the team's real Qualys/Nessus samples, not DefectDojo's | Real data arrived; BUILD_SPEC already said "real sample files" | Sam |
+| 2026-10-26 | Real client samples git-ignored (`sample-data-nessus-qualys/`, `data/private/`); committed tests use synthetic files; a local-only test runs the real ones | They are third-party client data; the repo is on GitHub | Step 6 |
+| 2026-10-26 | One Qualys connector for EVA/ASV/IVA (same `scan-1.dtd` format); assessment kind kept as evidence | Same format; the profile differs, the translation doesn't | Step 6 |
+| 2026-10-26 | Qualys VULN → `unvalidated` (scanner default); PRACTICE → `potential` (tool-asserted) | Qualys "confirmed" = detection matched, not Mirror's "exploited and verified"; same word, different claim | Step 6 |
+| 2026-10-26 | Information-only items (Qualys INFO/SERVICE, Nessus severity 0) skipped and **counted** per tool and reason | About 95% of Nessus items; silent filtering hides recall loss | Sam (approved) |
+| 2026-10-26 | `FindingBatch` gains `skipped` and `warnings`; warnings (e.g. Qualys "No host alive") never fail a run | An empty scan is a valid result, not a broken file | Step 6 |
+| 2026-10-26 | Same QID, same port, plain + "over ssl" = one finding with both results | One weakness on one service | Step 6 |
+| 2026-10-26 | Nessus scan type set per host from `Credentialed_Scan`; all CVSS versions, EPSS and exploit_available kept as tool values | Uncredentialed banner checks are an FP source; locked decision 1 still prefers NVD/CNA | Step 6 |
+| 2026-10-26 | Uploaded XML parsed with `defusedxml` (DOCTYPE allowed, entities and external refs refused) | Upload input is untrusted; FedRAMP review expects it | Step 6 |
+| 2026-10-26 | `Connector.extensions`: each connector names its file suffixes; drop folders ignore other files | XML and `.nessus` inputs; licence notices sit beside scans | Step 6 |
+| 2026-10-26 | Verified: findings with no CVSS already score on source severity (`severity_fallback`); CVSS is listed as missing only when a CVE exists | The gap the samples raised was already handled; now tested end to end | Step 6 |
+| 2026-10-27 | Confidence mapping (Qualys Confirmed → unvalidated, Mirror Confirmed → confirmed) approved | Same word, different claims | Sam |
+| 2026-10-27 | `ValidationStatus.tool_label` keeps the tool's own word; `confidence_note()` gives a deterministic tooltip text with points read from the weights; the UI shows it on the confidence badge | A reader must see which "Confirmed" they're looking at and what it did to the score | Sam (asked for a tooltip) |
+| 2026-10-27 | Mirror seed transcription (`seed/demo/scans/canonical/mirror-afd57ac3.json`) is committed to git | No secrets (redaction guard); the demo needs real endpoint findings | Sam |
+| 2026-10-27 | Threat intel fetched for the real samples' CVEs (CVE ids only leave the machine; no IPs, hosts or client names) into git-ignored `data/private/real/intel/` | Real-sample findings need CVSS/KEV/EPSS to score fully | Sam |

@@ -1,10 +1,10 @@
 """Batch validation: check every record and report every error, not just the first."""
 
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Literal
 
-from pydantic import AwareDatetime, ValidationError
+from pydantic import AwareDatetime, Field, NonNegativeInt, ValidationError
 
 from vmp.schema.finding import Finding
 from vmp.schema.types import Model, NonEmptyStr, duplicates
@@ -24,6 +24,11 @@ class FindingBatch(Model):
     schema_version: Literal["0.1"]
     ingest_batch: IngestBatch
     findings: tuple[dict[str, Any], ...]
+    # What the connector deliberately left out, by reason (e.g. information-only items), and
+    # scan-level conditions worth telling the analyst (e.g. "no host alive"). Neither is an
+    # error: dropping noise and reporting empty scans are both correct translations.
+    skipped: dict[NonEmptyStr, NonNegativeInt] = Field(default_factory=dict)
+    warnings: tuple[NonEmptyStr, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -38,6 +43,8 @@ class BatchReport:
     batch: IngestBatch | None
     findings: tuple[Finding, ...]
     errors: tuple[RecordError, ...]
+    skipped: Mapping[str, int] = field(default_factory=dict)
+    warnings: tuple[str, ...] = ()
 
     @property
     def ok(self) -> bool:
@@ -70,4 +77,5 @@ def validate_batch(payload: Mapping[str, Any]) -> BatchReport:
     if dupes := duplicates(f.finding_id for f in valid):
         errors.append(RecordError(None, None, (f"duplicate finding_id in batch: {dupes}",)))
 
-    return BatchReport(envelope.ingest_batch, tuple(valid), tuple(errors))
+    return BatchReport(envelope.ingest_batch, tuple(valid), tuple(errors),
+                       dict(envelope.skipped), envelope.warnings)

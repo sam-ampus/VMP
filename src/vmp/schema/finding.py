@@ -174,6 +174,9 @@ class Scores(Model):
 class ValidationStatus(Model):
     confidence: Confidence = Confidence.UNVALIDATED
     confidence_source: ConfidenceSource
+    # The tool's own word, e.g. Qualys "Confirmed". Kept because the same word can mean
+    # different things across tools; the UI explains the mapping (pipeline/confidence_note.py).
+    tool_label: NonEmptyStr | None = None
     reproduced: bool = False
     evidence_completeness: EvidenceCompleteness
     evidence_gaps: tuple[NonEmptyStr, ...] = ()
@@ -246,7 +249,8 @@ class Finding(Model):
             case PackageLocus():
                 return keys.package_key(s.tool, self.classification.cve, s.native_id, loc.purl)
             case EndpointLocus():
-                return keys.endpoint_key(s.tool, s.scan_id, loc.url, loc.method, loc.parameters)
+                return keys.endpoint_key(s.tool, s.scan_id, loc.url, loc.method, loc.parameters,
+                                         self.classification.cwe)
 
     @model_validator(mode="after")
     def _key_matches_fields(self) -> Self:

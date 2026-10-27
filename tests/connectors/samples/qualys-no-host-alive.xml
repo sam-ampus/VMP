@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE SCAN SYSTEM "https://qualysguard.qg1.apps.qualys.in/scan-1.dtd">
+<SCAN value="scan/1700000000.00002">
+    <ERROR number="3509">No host alive</ERROR>
+    <HEADER>
+        <KEY value="DATE">2026-01-05T08:54:04Z</KEY>
+        <KEY value="TITLE"><![CDATA[AC_IVA_Example_Q4]]></KEY>
+        <KEY value="OPTIONS"><![CDATA[Full TCP scan, Unix Authentication ON]]></KEY>
+        <OPTION_PROFILE>
+            <OPTION_PROFILE_TITLE option_profile_default="0"><![CDATA[Authenticated Scan : Full Scan : 2025]]></OPTION_PROFILE_TITLE>
+        </OPTION_PROFILE>
+    </HEADER>
+</SCAN>

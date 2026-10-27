@@ -76,17 +76,18 @@ Every feature should trace back to that sentence:
  asset inventory ──────────────────────────────────────────────────────────►┘
 ```
 
-| Stage | Status (2026-10-22) |
+| Stage | Status (2026-10-26) |
 |---|---|
 | Canonical schema + validation | **Built** (step 1), see [01-schema](01-schema.md) |
 | Scoring engine + test vectors | **Built** (step 2), see [02-scoring](02-scoring.md) |
 | Threat intel + CVSS selection | **Built** (step 3), see [03-intel](03-intel.md) |
 | Asset inventory | **Built** (step 4), see [04-assets](04-assets.md) |
-| Connectors (canonical JSON, Trivy) + seed data + glue | Next (step 5) |
-| Nessus/Qualys, dedupe/correlate, FP triage | Stage 2 |
+| Connectors (canonical JSON, Trivy) + seed data + glue + `vmp ingest` | **Built** (step 5), see [05-connectors-and-slice](05-connectors-and-slice.md) |
+| Qualys + Nessus connectors, on the team's real samples | **Built** (step 6), see [06-host-connectors](06-host-connectors.md) |
+| Dedupe/correlate, FP triage | Stage 2 |
 | Clustering, UI, report, events | Stage 3 |
 
-**Gap to know about:** nothing yet builds a `ScoringInput` from a real Finding. The engine, intel and schema are each tested on their own but not yet wired together. Step 5 adds that glue.
+**End to end since step 5:** `uv run vmp ingest seed/demo` takes real scanner files through ingest → enrich → score. Dedupe across scans, correlation, FP triage and clustering slot in between as Stages 2–3 land.
 
 ## Where AI is and isn't allowed: five agent roles
 
@@ -116,7 +117,10 @@ Package findings need no FP agent: comparing installed and fixed versions is exa
 
 ## Open items
 
-- A masked **Mirror JSON** feed. So far we only have a rendered PDF report.
+- **UI requirement (Stage 3):** the confidence badge shows a tooltip with `confidence_note` (already in `vmp ingest --json`), so a reader can tell a scanner "Confirmed" from a Mirror "Confirmed" and see the points it added.
+
+- A masked **Mirror JSON** feed. So far we only have a rendered PDF report. Requested from the team on 2026-10-26, along with non-empty IVA scans and one client scanned by both Nessus and Qualys (for step 7).
+- **Approval to use the real client samples** for development (requested 2026-10-26). Until then they stay local and git-ignored.
 - **Which scanners the customer runs.** This sets connector priority after Trivy and Nessus.
 - **IP arrangement:** the customer owns the source, but Ampcus integrates in Phase 2. These need reconciling.
 - Confirm with Donna that "FP reduction" means flagged and set aside, not removed.
