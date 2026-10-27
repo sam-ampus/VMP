@@ -71,7 +71,9 @@ class QualysConnector:
                     for e in scan.iterfind("ERROR")]
         skipped = {"information_gathered": 0}
         by_key: dict[str, dict[str, Any]] = {}
+        coverage: dict[str, str] = {}
         for host in scan.iterfind("IP"):
+            coverage[_asset_ref(host, ctx)] = detected
             skipped["information_gathered"] += sum(
                 1 for section, tag in _INFORMATION for _ in host.iterfind(f"{section}/CAT/{tag}"))
             for f in _host_findings(host, ctx, common):
@@ -84,20 +86,29 @@ class QualysConnector:
                         [*seen["evidence"]["observations"], *f["evidence"]["observations"]],
                         key=lambda o: (o["transport"], o["result"] or ""))
         findings = sorted(by_key.values(), key=lambda f: f["finding_id"])
-        return envelope(TOOL, ctx, findings, skipped=skipped, warnings=warnings)
+        return envelope(TOOL, ctx, findings, skipped=skipped, warnings=warnings,
+                        coverage=coverage)
 
 
 def _host_findings(host: Element, ctx: ScanContext, common: dict[str, Any]
                    ) -> Iterator[dict[str, Any]]:
     ip = host.get("value") or ""
-    name = host.get("name")
-    hostname = name if name and name != _NO_HOSTNAME else None
-    asset_ref = resolve_asset_ref(ctx.assets, ip, hostname)
+    hostname = _hostname(host)
+    asset_ref = _asset_ref(host, ctx)
     for section, tag, qualys_type in _FINDINGS:
         for cat in host.iterfind(f"{section}/CAT"):
             for item in cat.iterfind(tag):
                 yield _finding(item, cat, ctx, common, ip=ip, hostname=hostname,
                                os=text(host, "OS"), asset_ref=asset_ref, qualys_type=qualys_type)
+
+
+def _hostname(host: Element) -> str | None:
+    name = host.get("name")
+    return name if name and name != _NO_HOSTNAME else None
+
+
+def _asset_ref(host: Element, ctx: ScanContext) -> str:
+    return resolve_asset_ref(ctx.assets, host.get("value"), _hostname(host))
 
 
 def _finding(item: Element, cat: Element, ctx: ScanContext, common: dict[str, Any], *, ip: str,

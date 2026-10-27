@@ -76,7 +76,7 @@ Every feature should trace back to that sentence:
  asset inventory ──────────────────────────────────────────────────────────►┘
 ```
 
-| Stage | Status (2026-10-26) |
+| Stage | Status (2026-10-27) |
 |---|---|
 | Canonical schema + validation | **Built** (step 1), see [01-schema](01-schema.md) |
 | Scoring engine + test vectors | **Built** (step 2), see [02-scoring](02-scoring.md) |
@@ -84,10 +84,11 @@ Every feature should trace back to that sentence:
 | Asset inventory | **Built** (step 4), see [04-assets](04-assets.md) |
 | Connectors (canonical JSON, Trivy) + seed data + glue + `vmp ingest` | **Built** (step 5), see [05-connectors-and-slice](05-connectors-and-slice.md) |
 | Qualys + Nessus connectors, on the team's real samples | **Built** (step 6), see [06-host-connectors](06-host-connectors.md) |
-| Dedupe/correlate, FP triage | Stage 2 |
+| Dedupe, correlation, endpoint normalisation, re-detection rules | **Built** (step 7), see [07-dedupe-correlation](07-dedupe-correlation.md) |
+| FP triage + benchmark | Stage 2 (step 8) |
 | Clustering, UI, report, events | Stage 3 |
 
-**End to end since step 5:** `uv run vmp ingest seed/demo` takes real scanner files through ingest → enrich → score. Dedupe across scans, correlation, FP triage and clustering slot in between as Stages 2–3 land.
+**End to end since step 5:** `uv run vmp ingest seed/demo` takes real scanner files through ingest → enrich → score → correlate, and reports one row per vulnerability (since step 7). FP triage and clustering slot in as Stages 2–3 land.
 
 ## Where AI is and isn't allowed: five agent roles
 

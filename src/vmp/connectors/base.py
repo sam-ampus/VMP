@@ -55,8 +55,9 @@ def ingest(connector: Connector, raw: bytes, ctx: ScanContext) -> BatchReport:
 
 
 def envelope(source_tool: str, ctx: ScanContext, findings: Iterable[Mapping[str, Any]], *,
-             skipped: Mapping[str, int] | None = None, warnings: Iterable[str] = ()
-             ) -> dict[str, Any]:
+             skipped: Mapping[str, int] | None = None, warnings: Iterable[str] = (),
+             coverage: Mapping[str, str] | None = None) -> dict[str, Any]:
+    """coverage: asset_ref -> when the scan looked at it (ISO time), for every covered asset."""
     return {
         "schema_version": SCHEMA_VERSION,
         "ingest_batch": {"batch_id": ctx.batch_id, "source_tool": source_tool,
@@ -64,6 +65,8 @@ def envelope(source_tool: str, ctx: ScanContext, findings: Iterable[Mapping[str,
         "findings": [dict(f) for f in findings],
         "skipped": {k: v for k, v in sorted((skipped or {}).items()) if v},
         "warnings": list(warnings),
+        "coverage": [{"asset_ref": a, "scanned_at": t}
+                     for a, t in sorted((coverage or {}).items())],
     }
 
 

@@ -18,6 +18,17 @@ class IngestBatch(Model):
     received_at: AwareDatetime
 
 
+class ScanCoverage(Model):
+    """An asset the scan looked at, whether or not it found anything there.
+
+    Needed to say "not seen in the latest scan": absence only means something for an asset
+    the scan actually covered. A host with nothing but information-only items is covered.
+    """
+
+    asset_ref: NonEmptyStr
+    scanned_at: AwareDatetime
+
+
 class FindingBatch(Model):
     """The ingest envelope. Findings are parsed one by one so one bad record can't hide others."""
 
@@ -29,6 +40,7 @@ class FindingBatch(Model):
     # error: dropping noise and reporting empty scans are both correct translations.
     skipped: dict[NonEmptyStr, NonNegativeInt] = Field(default_factory=dict)
     warnings: tuple[NonEmptyStr, ...] = ()
+    coverage: tuple[ScanCoverage, ...] = ()  # empty = the format doesn't say (e.g. canonical)
 
 
 @dataclass(frozen=True)
@@ -45,6 +57,7 @@ class BatchReport:
     errors: tuple[RecordError, ...]
     skipped: Mapping[str, int] = field(default_factory=dict)
     warnings: tuple[str, ...] = ()
+    coverage: tuple[ScanCoverage, ...] = ()
 
     @property
     def ok(self) -> bool:
@@ -78,4 +91,4 @@ def validate_batch(payload: Mapping[str, Any]) -> BatchReport:
         errors.append(RecordError(None, None, (f"duplicate finding_id in batch: {dupes}",)))
 
     return BatchReport(envelope.ingest_batch, tuple(valid), tuple(errors),
-                       dict(envelope.skipped), envelope.warnings)
+                       dict(envelope.skipped), envelope.warnings, envelope.coverage)

@@ -124,5 +124,38 @@ def test_cli_exit_code_and_json(tmp_path: Path, capsys: pytest.CaptureFixture[st
     code = main(["ingest", str(SEED), "--as-of", "2026-10-22T00:00:00+00:00",
                  "--snapshots", str(tmp_path / "s"), "--json", str(out)])
     assert code == 0
-    assert "findings scored: 67" in capsys.readouterr().out
-    assert len(json.loads(out.read_text("utf-8"))["scored"]) == 67
+    printed = capsys.readouterr().out
+    assert "findings scored: 67" in printed
+    assert "vulnerabilities: 66" in printed
+    written = json.loads(out.read_text("utf-8"))
+    assert (len(written["scored"]), len(written["vulnerabilities"])) == (67, 66)
+
+
+def test_demo_correlates_one_login_issue_reported_over_http_and_https(result: RunResult) -> None:
+    """Two Mirror findings, same route, same weakness, reached by two schemes: one vulnerability.
+    The two other parameterless POSTs to that route have different CWEs and stay separate."""
+    assert len(result.vulnerabilities) == 66
+    login = [v for v in result.vulnerabilities
+             if any("|POST|/auth/login/|-|" in k for k in v.correlated.keys)]
+    merged = [v for v in login if len(v.correlated.vulnerability.finding_ids) == 2]
+    assert [v.correlated.keys for v in merged] == [
+        ("endpoint|ast_erp-fintec-solutions|POST|/auth/login/|-|CWE-1000",)]
+    assert len(login) == 3
+
+
+def test_vulnerability_is_assessed_on_its_peak_finding(result: RunResult) -> None:
+    by_id = {s.finding.finding_id: s for s in result.scored}
+    for v in result.vulnerabilities:
+        peak = max(by_id[f].result.score for f in v.correlated.vulnerability.finding_ids)
+        assert v.assessment.score == peak
+        assert v.assessment.asset_inventory_id == result.asset_inventory_id
+
+
+def test_cvss_factor_names_intel_when_nvd_or_the_cna_supplied_it(result: RunResult) -> None:
+    for s in result.scored:
+        base = s.result.factors[0]
+        if base.name == "cvss_base":
+            assert s.assembled.cvss is not None
+            expected = "intel" if s.assembled.cvss.rule in ("nvd", "cna") else "tool"
+            assert base.source == expected
+    assert any(s.result.factors[0].source == "intel" for s in result.scored)

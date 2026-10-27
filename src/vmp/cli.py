@@ -46,27 +46,46 @@ def main(argv: list[str] | None = None) -> int:
 
 
 def render_table(r: RunResult) -> str:
+    """One row per vulnerability (what an analyst works), shown by its peak finding."""
+    by_id = {s.finding.finding_id: s for s in r.scored}
     lines = [
         f"files: {len(r.files)}   findings scored: {len(r.scored)}   "
-        f"ingest problems: {len(r.problems)}",
-        f"weights {r.weights_version} · intel {_short(r.intel_snapshot_id)} · "
+        f"vulnerabilities: {len(r.vulnerabilities)}   ingest problems: {len(r.problems)}",
+        f"weights {r.weights_version} | intel {_short(r.intel_snapshot_id)} | "
         f"assets {_short(r.asset_inventory_id)}",
         "",
-        f"{'score':>5}  {'computed':<8}  {'source':<8}  {'tool':<9}  {'asset':<28}  title",
-        f"{'-' * 5}  {'-' * 8}  {'-' * 8}  {'-' * 9}  {'-' * 28}  {'-' * 40}",
+        f"{'score':>5}  {'computed':<8}  {'source':<8}  {'seen by':<16}  {'asset':<28}  title",
+        f"{'-' * 5}  {'-' * 8}  {'-' * 8}  {'-' * 16}  {'-' * 28}  {'-' * 40}",
     ]
-    for s in r.scored:
-        f = s.finding
-        asset = f.locus.asset_ref + ("" if s.assembled.asset_known else " (?)")
-        flag = " [contested CVSS]" if s.assembled.cvss and s.assembled.cvss.contested else ""
+    for v in r.vulnerabilities:
+        a, c = v.assessment, v.correlated
+        peak = by_id[a.peak_finding_id]
+        asset = c.asset_ref + ("" if peak.assembled.asset_known else " (?)")
+        n = len(c.vulnerability.finding_ids)
+        seen = ",".join(c.tools) + (f" ({n})" if n > 1 else "")
+        flags = " [contested CVSS]" if peak.assembled.cvss and peak.assembled.cvss.contested else ""
+        if c.review:
+            flags += " [review grouping]"
+        if c.not_seen:
+            flags += " [not seen in latest " + ",".join(x.tool for x in c.not_seen) + " scan]"
         lines.append(
-            f"{s.result.score:>5}  {s.result.severity:<8}  "
-            f"{f.classification.source_severity:<8}  {f.source.tool:<9}  {asset[:28]:<28}  "
-            f"{f.classification.title[:70]}{flag}"
+            f"{a.score:>5}  {a.computed_severity:<8}  {a.source_severity or '-':<8}  "
+            f"{seen[:16]:<16}  {asset[:28]:<28}  {peak.finding.classification.title[:70]}{flags}"
         )
-    sev = Counter(str(s.result.severity) for s in r.scored)
-    lines += ["", "computed severity: " + ", ".join(
+    sev = Counter(str(v.assessment.computed_severity) for v in r.vulnerabilities)
+    lines += ["", "computed severity (vulnerabilities): " + ", ".join(
         f"{k} {sev[k]}" for k in ("critical", "high", "medium", "low", "info") if sev[k])]
+    multi = sum(1 for v in r.vulnerabilities if len(v.correlated.tools) > 1)
+    not_seen = sum(1 for v in r.vulnerabilities if v.correlated.not_seen)
+    lines.append(f"seen by more than one tool: {multi}   "
+                 f"not seen in a newer scan (open, for review): {not_seen}")
+    review = [v for v in r.vulnerabilities if v.correlated.review]
+    if review:
+        lines += ["", f"correlation review ({len(review)}): groups to confirm, nothing changed"]
+        for v in review:
+            for flag in v.correlated.review:
+                lines.append(f"  REVIEW {v.correlated.vulnerability.vulnerability_id} "
+                             f"{v.correlated.asset_ref}: {flag.detail}")
     unknown = sorted({s.finding.locus.asset_ref for s in r.scored if not s.assembled.asset_known})
     if unknown:
         lines.append("assets not in inventory (scored without context, marked ?): "
@@ -94,6 +113,10 @@ def to_json(r: RunResult, now: datetime) -> dict[str, Any]:
                      for p in r.problems],
         "warnings": [{"file": w.file, "messages": list(w.messages)} for w in r.warnings],
         "skipped": r.skipped,
+        "vulnerabilities": [{
+            **v.correlated.model_dump(mode="json"),
+            "assessment": v.assessment.model_dump(mode="json"),
+        } for v in r.vulnerabilities],
         "scored": [_scored_json(s, weights) for s in r.scored],
     }
 

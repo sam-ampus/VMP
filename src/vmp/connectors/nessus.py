@@ -45,8 +45,11 @@ class NessusConnector:
         root = load_xml(raw, root_tag="NessusClientData_v2", what="Nessus (.nessus v2)")
         skipped = {"information_only": 0}
         by_key: dict[str, dict[str, Any]] = {}
+        coverage: dict[str, str] = {}
         for host in root.iterfind("Report/ReportHost"):
-            for f in _host_findings(host, ctx):
+            h = _host_info(host, ctx)
+            coverage[h["asset_ref"]] = max(h["detected"], coverage.get(h["asset_ref"], ""))
+            for f in _host_findings(host, ctx, h):
                 if f is None:
                     skipped["information_only"] += 1
                 elif (seen := by_key.get(f["idempotency_key"])) is None:
@@ -55,11 +58,10 @@ class NessusConnector:
                     # The same plugin reported twice for one host and port: one observation.
                     seen["evidence"]["times_reported"] += 1
         findings = sorted(by_key.values(), key=lambda f: f["finding_id"])
-        return envelope(TOOL, ctx, findings, skipped=skipped)
+        return envelope(TOOL, ctx, findings, skipped=skipped, coverage=coverage)
 
 
-def _host_findings(host: Element, ctx: ScanContext) -> Iterator[dict[str, Any] | None]:
-    """One canonical finding per ReportItem; None for an information-only item."""
+def _host_info(host: Element, ctx: ScanContext) -> dict[str, Any]:
     props = {t.get("name"): (t.text or "").strip() for t in host.iterfind("HostProperties/tag")}
     ip = props.get("host-ip") or host.get("name") or ""
     hostname = props.get("host-fqdn") or props.get("netbios-name") or None
@@ -67,14 +69,19 @@ def _host_findings(host: Element, ctx: ScanContext) -> Iterator[dict[str, Any] |
     detected = (_epoch(props.get("HOST_END_TIMESTAMP")) or _epoch(props.get("HOST_START_TIMESTAMP"))
                 or ctx.received_at.isoformat())
     credentialed = props.get("Credentialed_Scan")
-    host_info = {
+    return {
         "ip": ip, "hostname": hostname, "os": props.get("operating-system") or None,
         "asset_ref": asset_ref, "detected": detected,
         "scan_type": _SCAN_TYPE.get(credentialed or "", "unknown"),
         "credentialed": {"true": True, "false": False}.get(credentialed or ""),
     }
+
+
+def _host_findings(host: Element, ctx: ScanContext, h: dict[str, Any]
+                   ) -> Iterator[dict[str, Any] | None]:
+    """One canonical finding per ReportItem; None for an information-only item."""
     for item in host.iterfind("ReportItem"):
-        yield _finding(item, ctx, host_info) if item.get("severity") in _SEVERITY else None
+        yield _finding(item, ctx, h) if item.get("severity") in _SEVERITY else None
 
 
 def _finding(item: Element, ctx: ScanContext, h: dict[str, Any]) -> dict[str, Any]:

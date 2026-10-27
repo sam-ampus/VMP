@@ -47,6 +47,7 @@ class ScoringInput(Model):
     """None means unknown. Unknown contributes nothing and is listed as a missing input."""
 
     cvss_base: CvssBase | None = None
+    cvss_from_intel: bool = False  # chosen from NVD/CNA (intel) rather than the tool's report
     source_severity: NormalisedSeverity
     has_cve: bool
     kev: bool | None = None

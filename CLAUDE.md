@@ -6,6 +6,7 @@ Read these before working here:
 - `docs/design/00-overview.md`: Donna's ask, constraints, system map, status and open items.
 - `docs/design/decisions.md`: every decision so far. Append new ones.
 - `docs/design/NN-*.md`: one design note per build step.
+- `docs/design/backlog.md`: everything deferred, known limitations and open questions. Read it at the start of every step.
 
 ## Working mode (Phase 1)
 - Claude writes the code. Sam reviews; delivery to Donna comes first.
@@ -16,6 +17,7 @@ Read these before working here:
   - the Applied AI tie-in;
   - a code tour;
   - three check-yourself questions.
+- **No silent tech debt.** Fix small in-scope issues now. Anything deferred goes in `docs/design/backlog.md` with a trigger, never only in chat or a `TODO`; move items to *Resolved* when they're done.
 - Commit only when Sam asks.
 
 ## Commands

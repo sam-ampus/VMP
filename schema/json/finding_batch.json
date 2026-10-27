@@ -26,11 +26,41 @@
       ],
       "title": "IngestBatch",
       "type": "object"
+    },
+    "ScanCoverage": {
+      "additionalProperties": false,
+      "description": "An asset the scan looked at, whether or not it found anything there.\n\nNeeded to say \"not seen in the latest scan\": absence only means something for an asset\nthe scan actually covered. A host with nothing but information-only items is covered.",
+      "properties": {
+        "asset_ref": {
+          "minLength": 1,
+          "title": "Asset Ref",
+          "type": "string"
+        },
+        "scanned_at": {
+          "format": "date-time",
+          "title": "Scanned At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "asset_ref",
+        "scanned_at"
+      ],
+      "title": "ScanCoverage",
+      "type": "object"
     }
   },
   "additionalProperties": false,
   "description": "The ingest envelope. Findings are parsed one by one so one bad record can't hide others.",
   "properties": {
+    "coverage": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ScanCoverage"
+      },
+      "title": "Coverage",
+      "type": "array"
+    },
     "findings": {
       "items": {
         "additionalProperties": true,

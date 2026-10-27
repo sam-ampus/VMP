@@ -59,6 +59,7 @@ def assess(
     *,
     assessed_at: AwareDatetime,
     intel_snapshot_id: str | None = None,
+    asset_inventory_id: str | None = None,
 ) -> RiskAssessment:
     """Score each finding; the vulnerability's assessment is its peak finding's score.
 
@@ -81,6 +82,7 @@ def assess(
         missing_inputs=tuple(str(m) for m in peak.missing_inputs),
         weights_version=weights.version,
         intel_snapshot_id=intel_snapshot_id,
+        asset_inventory_id=asset_inventory_id,
         engine_version=ENGINE_VERSION,
         assessed_at=assessed_at,
     )
@@ -114,9 +116,8 @@ def _base(inp: ScoringInput, w: Weights) -> Factor:
     """The anchor factor, always present so every score has at least one explanation."""
     if inp.cvss_base is not None:
         m = w.base.cvss_multiplier
-        # TODO(enrichment): source becomes INTEL when the selected CVSS came from NVD/CNA.
-        return _factor(FactorName.CVSS_BASE, inp.cvss_base * m, inp.cvss_base,
-                       FactorSource.TOOL, weight=m)
+        source = FactorSource.INTEL if inp.cvss_from_intel else FactorSource.TOOL
+        return _factor(FactorName.CVSS_BASE, inp.cvss_base * m, inp.cvss_base, source, weight=m)
     points = w.base.severity_fallback[inp.source_severity]
     return _factor(FactorName.SEVERITY_FALLBACK, points, inp.source_severity, FactorSource.TOOL)
 

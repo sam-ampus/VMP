@@ -87,7 +87,7 @@ class TrivyConnector:
                     paths = seen["evidence"]["pkg_paths"]
                     seen["evidence"]["pkg_paths"] = sorted({*paths, *f["evidence"]["pkg_paths"]})
         findings = sorted(by_key.values(), key=lambda f: f["finding_id"])
-        return envelope(TOOL, ctx, findings)
+        return envelope(TOOL, ctx, findings, coverage={asset_ref: detected})
 
 
 def _load(raw: bytes) -> Any:

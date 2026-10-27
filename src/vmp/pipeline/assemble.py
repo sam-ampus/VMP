@@ -15,6 +15,7 @@ from decimal import Decimal
 from vmp.assets import AssetProvider
 from vmp.pipeline.cvss import distro_of, select_cvss
 from vmp.schema.enrichment import CvssSelection, Enrichment
+from vmp.schema.enums import CvssSelectionRule
 from vmp.schema.finding import Finding, PackageLocus
 from vmp.schema.types import Model
 from vmp.scoring.inputs import ScoringInput
@@ -42,6 +43,8 @@ def build_scoring_input(
     epss = _epss(e.epss for e in intel)
     inp = ScoringInput(
         cvss_base=cvss.base if cvss else None,
+        cvss_from_intel=cvss is not None and cvss.rule in (CvssSelectionRule.NVD,
+                                                           CvssSelectionRule.CNA),
         source_severity=finding.classification.source_severity,
         has_cve=bool(finding.classification.cve),
         # Intel wins when it knows; the tool's own report is the fallback, never the override.
