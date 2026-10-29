@@ -1,0 +1,31 @@
+{
+  "category": "cross-scanner-duplicate",
+  "about": "Two tools report the same issue. They must become one vulnerability (not two to triage), and agreement only counts as corroboration when at least one tool logged in.",
+  "cases": [
+    {"id": "cs-auth-plus-potential", "truth": "real", "expect": "low_likelihood",
+     "why": "Nessus (credentialed) and Qualys (potential) on the same host and CVE: one vulnerability; the credentialed evidence wins.",
+     "findings": [
+       {"shape": "host", "tool": "nessus", "ip": "192.0.2.60", "port": 22, "scan_type": "authenticated_network", "os": "Linux Kernel 5.15 on Ubuntu 22.04", "title": "Ubuntu 22.04 LTS : OpenSSH vulnerabilities (USN-0003-1)", "family": "Ubuntu Local Security Checks", "cve": ["CVE-2023-48795"], "plugin_output": "Remote package installed : openssh-server_1:8.9p1-3ubuntu0.4\nShould be : openssh-server_1:8.9p1-3ubuntu0.6"},
+       {"shape": "host", "tool": "qualys", "ip": "192.0.2.60", "port": 22, "qualys_type": "potential", "os": "Ubuntu / Linux 22.04", "title": "SSH Prefix Truncation Vulnerability (Terrapin)", "cve": ["CVE-2023-48795"], "result": "Vulnerable SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.4 detected on port 22"}]},
+    {"id": "cs-both-unauthenticated", "truth": "real", "expect": "needs_review",
+     "why": "Two tools, neither logged in: both may be reading the same banner, so it isn't corroboration.",
+     "findings": [
+       {"shape": "host", "tool": "nessus", "ip": "192.0.2.61", "scan_type": "unauthenticated_network", "os": "Linux Kernel 5.4", "title": "Nginx < 1.20.1 Memory Corruption", "family": "Web Servers", "cve": ["CVE-2021-23017"], "description": "According to its self-reported version, the remote nginx is prior to 1.20.1."},
+       {"shape": "host", "tool": "qualys", "ip": "192.0.2.61", "scan_type": "unauthenticated_network", "os": "Linux 5.x", "title": "Nginx DNS Resolver Off-by-One Heap Write", "cve": ["CVE-2021-23017"], "result": "Vulnerable version of Nginx detected on port 443 - 1.18.0"}]},
+    {"id": "cs-auth-plus-auth-review", "truth": "real", "expect": "low_likelihood",
+     "why": "Each tool alone needs review (Qualys potential; Nessus banner without a login), but Qualys had a working login: independent agreement lifts it.",
+     "findings": [
+       {"shape": "host", "tool": "qualys", "ip": "192.0.2.62", "scan_type": "authenticated_network", "host_auth": "configured; no failure reported", "qualys_type": "potential", "os": "Ubuntu / Linux 22.04", "title": "OpenSSL Multiple Vulnerabilities", "cve": ["CVE-2023-0203"], "result": "Vulnerable OpenSSL version detected on port 443."},
+       {"shape": "host", "tool": "nessus", "ip": "192.0.2.62", "scan_type": "unauthenticated_network", "os": "Linux Kernel 5.15 on Ubuntu 22.04", "title": "OpenSSL 3.0.x < 3.0.8 Multiple Vulnerabilities", "family": "Web Servers", "cve": ["CVE-2023-0203"], "description": "The version of OpenSSL installed on the remote host is prior to 3.0.8."}]},
+    {"id": "cs-disagree", "truth": "real", "expect": "needs_review",
+     "why": "One tool's check contradicts the host OS; the other observed it with a login. Findings disagree: a person decides, never an automatic 'FP'.",
+     "findings": [
+       {"shape": "host", "tool": "qualys", "ip": "192.0.2.63", "port": 445, "family": "Windows", "os": "Ubuntu / Linux 22.04", "title": "Microsoft Windows SMB Information Disclosure", "cve": ["CVE-2023-0204"], "result": "SMB response"},
+       {"shape": "host", "tool": "nessus", "ip": "192.0.2.63", "port": 445, "scan_type": "authenticated_network", "os": "Linux Kernel 5.15", "title": "Samba Information Disclosure", "family": "Misc.", "cve": ["CVE-2023-0204"]}]},
+    {"id": "cs-endpoint-http-https", "truth": "real", "expect": "low_likelihood",
+     "why": "Mirror reports the same weakness on the same route over http and https: one vulnerability.",
+     "findings": [
+       {"shape": "endpoint", "url": "http://app.example.com/auth/login/", "method": "POST", "cwe": ["CWE-319"], "confidence": "confirmed", "native_id": "MIR-10"},
+       {"shape": "endpoint", "url": "https://app.example.com/auth/login/", "method": "POST", "cwe": ["CWE-319"], "confidence": "likely", "native_id": "MIR-11"}]}
+  ]
+}

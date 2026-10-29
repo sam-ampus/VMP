@@ -13,9 +13,21 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from vmp.pipeline.assess_fp import NOT_REAL
 from vmp.pipeline.confidence_note import confidence_note
 from vmp.pipeline.run import RunResult, Scored, run_folder
+from vmp.schema.enums import FPBand
 from vmp.scoring.weights import Weights, load_weights
+
+# Short FP labels for the table: what the band says about the finding being real.
+FP_LABEL = {
+    FPBand.CONFIRMED_APPLICABLE: "real (exact)",
+    FPBand.LOW_LIKELIHOOD: "likely real",
+    FPBand.NEEDS_REVIEW: "review",
+    FPBand.LIKELY_FALSE_POSITIVE: "likely FP",
+    FPBand.CONFIRMED_NOT_APPLICABLE: "FP (exact)",
+}
+_FP_LISTED = 20  # the "flagged as not real" section lists this many; --json has them all
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -54,8 +66,9 @@ def render_table(r: RunResult) -> str:
         f"weights {r.weights_version} | intel {_short(r.intel_snapshot_id)} | "
         f"assets {_short(r.asset_inventory_id)}",
         "",
-        f"{'score':>5}  {'computed':<8}  {'source':<8}  {'seen by':<16}  {'asset':<28}  title",
-        f"{'-' * 5}  {'-' * 8}  {'-' * 8}  {'-' * 16}  {'-' * 28}  {'-' * 40}",
+        f"{'score':>5}  {'computed':<8}  {'source':<8}  {'seen by':<16}  {'FP check':<12}  "
+        f"{'asset':<28}  title",
+        f"{'-' * 5}  {'-' * 8}  {'-' * 8}  {'-' * 16}  {'-' * 12}  {'-' * 28}  {'-' * 40}",
     ]
     for v in r.vulnerabilities:
         a, c = v.assessment, v.correlated
@@ -70,7 +83,8 @@ def render_table(r: RunResult) -> str:
             flags += " [not seen in latest " + ",".join(x.tool for x in c.not_seen) + " scan]"
         lines.append(
             f"{a.score:>5}  {a.computed_severity:<8}  {a.source_severity or '-':<8}  "
-            f"{seen[:16]:<16}  {asset[:28]:<28}  {peak.finding.classification.title[:70]}{flags}"
+            f"{seen[:16]:<16}  {FP_LABEL[v.fp.band]:<12}  {asset[:28]:<28}  "
+            f"{peak.finding.classification.title[:70]}{flags}"
         )
     sev = Counter(str(v.assessment.computed_severity) for v in r.vulnerabilities)
     lines += ["", "computed severity (vulnerabilities): " + ", ".join(
@@ -79,6 +93,7 @@ def render_table(r: RunResult) -> str:
     not_seen = sum(1 for v in r.vulnerabilities if v.correlated.not_seen)
     lines.append(f"seen by more than one tool: {multi}   "
                  f"not seen in a newer scan (open, for review): {not_seen}")
+    lines += _fp_section(r)
     review = [v for v in r.vulnerabilities if v.correlated.review]
     if review:
         lines += ["", f"correlation review ({len(review)}): groups to confirm, nothing changed"]
@@ -101,6 +116,23 @@ def render_table(r: RunResult) -> str:
     return "\n".join(lines) + "\n"
 
 
+def _fp_section(r: RunResult) -> list[str]:
+    bands = Counter(v.fp.band for v in r.vulnerabilities)
+    lines = ["FP check (vulnerabilities; flags only, scores unchanged): " + ", ".join(
+        f"{FP_LABEL[b]} {bands[b]}" for b in FP_LABEL if bands[b])]
+    flagged = [v for v in r.vulnerabilities if v.fp.band in NOT_REAL]
+    if flagged:
+        lines += ["", f"flagged as probably not real ({len(flagged)}): still open, for an "
+                  "analyst to confirm"]
+        for v in flagged[:_FP_LISTED]:
+            c = v.correlated
+            lines.append(f"  {FP_LABEL[v.fp.band].upper()} {c.vulnerability.vulnerability_id} "
+                         f"{c.asset_ref}: {v.fp.rationale}")
+        if len(flagged) > _FP_LISTED:
+            lines.append(f"  ... and {len(flagged) - _FP_LISTED} more (see --json)")
+    return lines
+
+
 def to_json(r: RunResult, now: datetime) -> dict[str, Any]:
     weights = load_weights(r.weights_version)
     return {
@@ -116,6 +148,7 @@ def to_json(r: RunResult, now: datetime) -> dict[str, Any]:
         "vulnerabilities": [{
             **v.correlated.model_dump(mode="json"),
             "assessment": v.assessment.model_dump(mode="json"),
+            "fp_assessment": v.fp.model_dump(mode="json"),
         } for v in r.vulnerabilities],
         "scored": [_scored_json(s, weights) for s in r.scored],
     }
@@ -129,6 +162,7 @@ def _scored_json(s: Scored, weights: Weights) -> dict[str, Any]:
         "cvss_selection": s.assembled.cvss.model_dump(mode="json") if s.assembled.cvss else None,
         "asset_known": s.assembled.asset_known,
         "result": s.result.model_dump(mode="json"),
+        "fp_assessment": s.fp.model_dump(mode="json"),
     }
 
 

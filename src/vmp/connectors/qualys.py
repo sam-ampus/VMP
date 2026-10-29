@@ -14,6 +14,11 @@ us it could not verify; that is kept, and FP triage (Stage 2) reads it.
 
 This format carries no CVSS. CVSS comes from intel for findings with CVEs; findings without
 one (TLS configuration, headers) score on the source severity, which the engine handles.
+
+"Authentication ON" in the header means a login was configured, not that it worked. Qualys
+reports a failed login per host as an information item ("Unix Authentication Failed", QID
+105053; "Windows Authentication Failed", QID 105015). That host's findings are recorded as
+unauthenticated, with the reason, and the run warns. FP triage relies on this (backlog B-017).
 """
 
 import re
@@ -43,6 +48,7 @@ _CVE = re.compile(r"CVE-\d{4}-\d{4,}")
 _ASSESSMENT = re.compile(r"(?<![A-Za-z])(EVA|ASV|IVA)(?![A-Za-z])")
 _AUTH_ON = re.compile(r"\b\w+ Authentication ON\b")
 _NO_HOSTNAME = "No registered hostname"
+_AUTH_FAILED = re.compile(r"\bAuthentication Failed\b", re.IGNORECASE)
 
 
 class QualysConnector:
@@ -54,10 +60,11 @@ class QualysConnector:
         header = {k.get("value"): (k.text or "").strip() for k in scan.iterfind("HEADER/KEY")}
         profile = text(scan, "HEADER/OPTION_PROFILE/OPTION_PROFILE_TITLE")
         detected = _timestamp(header.get("DATE")) or ctx.received_at.isoformat()
+        auth_on = bool(_AUTH_ON.search(header.get("OPTIONS", "")))
         common = {
             "detected": detected,
-            "scan_type": ("authenticated_network" if _AUTH_ON.search(header.get("OPTIONS", ""))
-                          else "unauthenticated_network"),
+            "auth_on": auth_on,
+            "scan_type": "authenticated_network" if auth_on else "unauthenticated_network",
             "tool_version": header.get("SCAN_HOST") or None,
             "scan_evidence": {
                 "assessment": _assessment(profile, header.get("TITLE")),
@@ -72,7 +79,9 @@ class QualysConnector:
         skipped = {"information_gathered": 0}
         by_key: dict[str, dict[str, Any]] = {}
         coverage: dict[str, str] = {}
+        auth_failed_hosts = 0
         for host in scan.iterfind("IP"):
+            auth_failed_hosts += bool(auth_on and _auth_failures(host))
             coverage[_asset_ref(host, ctx)] = detected
             skipped["information_gathered"] += sum(
                 1 for section, tag in _INFORMATION for _ in host.iterfind(f"{section}/CAT/{tag}"))
@@ -85,6 +94,10 @@ class QualysConnector:
                     seen["evidence"]["observations"] = sorted(
                         [*seen["evidence"]["observations"], *f["evidence"]["observations"]],
                         key=lambda o: (o["transport"], o["result"] or ""))
+        if auth_failed_hosts:
+            warnings.append(f"Qualys authentication was configured but failed on "
+                            f"{auth_failed_hosts} host(s); their findings are recorded as "
+                            "unauthenticated")
         findings = sorted(by_key.values(), key=lambda f: f["finding_id"])
         return envelope(TOOL, ctx, findings, skipped=skipped, warnings=warnings,
                         coverage=coverage)
@@ -95,11 +108,27 @@ def _host_findings(host: Element, ctx: ScanContext, common: dict[str, Any]
     ip = host.get("value") or ""
     hostname = _hostname(host)
     asset_ref = _asset_ref(host, ctx)
+    failures = _auth_failures(host) if common["auth_on"] else []
+    if not common["auth_on"]:
+        host_auth = None
+    elif failures:
+        host_auth = "failed: " + "; ".join(failures)
+    else:
+        host_auth = "configured; no failure reported"
+    host_common = {**common, "host_auth": host_auth,
+                   "scan_type": "unauthenticated_network" if failures else common["scan_type"]}
     for section, tag, qualys_type in _FINDINGS:
         for cat in host.iterfind(f"{section}/CAT"):
             for item in cat.iterfind(tag):
-                yield _finding(item, cat, ctx, common, ip=ip, hostname=hostname,
+                yield _finding(item, cat, ctx, host_common, ip=ip, hostname=hostname,
                                os=text(host, "OS"), asset_ref=asset_ref, qualys_type=qualys_type)
+
+
+def _auth_failures(host: Element) -> list[str]:
+    """Qualys's own per-host 'Authentication Failed' items, as 'QID title'."""
+    return sorted(f"QID {i.get('number')} {title}"
+                  for i in host.iterfind("INFOS/CAT/INFO")
+                  if (title := text(i, "TITLE")) and _AUTH_FAILED.search(title))
 
 
 def _hostname(host: Element) -> str | None:
@@ -157,6 +186,7 @@ def _finding(item: Element, cat: Element, ctx: ScanContext, common: dict[str, An
             "references": sorted({u.text.strip() for u in item.iter("URL")
                                   if u.text and u.text.strip()}),
             **common["scan_evidence"],
+            "host_auth": common["host_auth"],
             "qualys_type": qualys_type,
             "pci_flag": text(item, "PCI_FLAG") == "1",
             "diagnosis": text(item, "DIAGNOSIS"),

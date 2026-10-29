@@ -23,6 +23,7 @@ Read these before working here:
 ## Commands
 ```
 uv run pytest
-uv run ruff check; uv run mypy src scripts
+uv run ruff check; uv run mypy src scripts benchmark
 uv run vmp ingest seed/demo --as-of 2026-10-22T00:00:00Z   # end-to-end demo run
+uv run python -m benchmark                                  # FP benchmark; fails on the hard rule
 ```

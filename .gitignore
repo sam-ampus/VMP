@@ -12,3 +12,6 @@ build/
 # Real customer scan data: never commit
 sample-data-nessus-qualys/
 data/private/
+
+# Personal notes kept beside the project: never commit
+private/

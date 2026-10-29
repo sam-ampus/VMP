@@ -1,0 +1,21 @@
+{
+  "category": "endpoint-confidence",
+  "about": "Extra to the skill's five: web findings, judged on the tool's confidence tier and the evidence it kept. No version math, and never dismissed without a fact against them.",
+  "cases": [
+    {"id": "ep-confirmed", "truth": "real", "expect": "low_likelihood",
+     "why": "Exploited during the test, with request and response.",
+     "findings": [{"shape": "endpoint", "cwe": ["CWE-89"], "confidence": "confirmed"}]},
+    {"id": "ep-likely-partial", "truth": "real", "expect": "low_likelihood",
+     "why": "Payload delivery observed; no proof-of-concept script.",
+     "findings": [{"shape": "endpoint", "cwe": ["CWE-89"], "confidence": "likely", "evidence": "partial", "gaps": ["no proof-of-concept script"]}]},
+    {"id": "ep-likely-no-evidence", "truth": "false_positive", "expect": "needs_review",
+     "why": "Rated likely with nothing kept to check it against.",
+     "findings": [{"shape": "endpoint", "cwe": ["CWE-79"], "confidence": "likely", "evidence": "none"}]},
+    {"id": "ep-potential", "truth": "false_positive", "expect": "needs_review",
+     "why": "A lead that wasn't tested to a result. Untested isn't the same as false.",
+     "findings": [{"shape": "endpoint", "cwe": ["CWE-918"], "confidence": "potential", "evidence": "partial"}]},
+    {"id": "ep-untested", "truth": "real", "expect": "needs_review",
+     "why": "Found but not tried; a person should try it.",
+     "findings": [{"shape": "endpoint", "cwe": ["CWE-639"], "confidence": "untested", "evidence": "partial"}]}
+  ]
+}

@@ -32,13 +32,13 @@ Status: **open** · **waiting** (on data or a person) · **planned** (assigned t
 | B-014 | **4 non-empty Qualys IVA scans** (3 of 4 received were "No host alive") | IVA is under-tested on real data | Team ask #3 | Step 6 | waiting |
 | B-015 | **Same hosts scanned by Nessus and Qualys** | Cross-tool correlation is tested only on synthetic data; real cross-tool matches = 0 | Team ask #5; re-run step 7 checks when it arrives | Steps 6–7 | waiting |
 | B-016 | **More rescan pairs** (same scope, two dates) | Only one real pair so far (two Nessus files, 22 hosts) | Team ask #6 | Step 7 | waiting |
-| B-017 | **Qualys scan type comes from the `OPTIONS` header** ("… Authentication ON"), which doesn't prove a login succeeded per host | An uncredentialed host scored as authenticated | Step 8 (FP triage); read Qualys's per-host auth QIDs | Step 6 | planned |
 | B-018 | **Qualys severity 1 → `info`** (DefectDojo's mapping) is arguable | Affects the severity fallback for no-CVE findings | Revisit with analyst feedback | Step 6 | open |
 | B-019 | **Nessus severity attribute vs `risk_factor` disagree** on some items; the attribute is used | Analysts may expect the `risk_factor` | Show both in the UI (Stage 3) | Step 6 | planned |
 | B-020 | **The Mirror PDF transcription script** uses `pypdf` via `uv run --with`, outside the locked dependencies | Not hash-pinned; one-off tool | Retire when B-010 lands | Step 5 | open |
 | B-021 | **The committed Mirror seed names the target's hosts and weaknesses** | Committed by decision; confidential report | Before sharing the repo outside the team | Sam, 2026-10-27 | open |
 | B-022 | **Seed `osv.json` is 2.2 MB** (mostly Debian binutils advisories) | Repo size | If repo size matters; prune to in-scope packages | Step 5 | open |
 | B-023 | **BUILD_SPEC calls the DefectDojo corpus "MIT"**; it's BSD-3-Clause | The spec text is wrong (the notice ships correctly) | Next time BUILD_SPEC is edited with Sam's okay | Step 5 | open |
+| B-024 | **npm (semver) and Maven version comparators** for package FP triage; step 8 covers dpkg, rpm, apk and PyPI | Packages from other ecosystems get `needs_review` instead of a definite answer | When a scan contains those ecosystems | Sam, 2026-10-28 | open |
 
 ## Correlation and lifecycle
 
@@ -66,8 +66,13 @@ Status: **open** · **waiting** (on data or a person) · **planned** (assigned t
 
 | ID | Item | Why it matters | Trigger / when | Source | Status |
 |---|---|---|---|---|---|
-| B-050 | **Use Qualys "potential" and Nessus `Credentialed_Scan=false` as FP signals** | Both are recorded now and unused | Step 8 | Step 6 | planned |
 | B-051 | **Confirm with Donna that FP reduction means "flagged and set aside", never removed** | Scope of her ask | Next Donna meeting | Oct 9 plan | waiting |
+| B-052 | **Endpoint "likely FP" needs a fact against the finding** (unreachable route, response contradicts the claim). Step 8 never calls a web finding not real | Endpoint recall on FPs is 0% in the benchmark | With Mirror JSON (B-010) or the evidence agent: reachability facts | Step 8 | open |
+| B-053 | **OSV vs vendor disagreement isn't detected.** OSV is consulted only when the tool's fix data can't decide | Two authoritative sources disagreeing should go to a person | When OSV is checked for every package finding; flag disagreement as review | Step 8 | open |
+| B-054 | **"Inferred from a version" is recognised by fixed text patterns** (Nessus "self-reported version", Qualys "Vulnerable … detected", titles with "< x.y") | A check worded differently is treated as directly observed (likely real) | Re-check against analyst dispositions; add patterns from more sample data | Step 8 | open |
+| B-055 | **Host version comparison is plain dotted numbers only** (plus dpkg/rpm package pairs). Cisco "Installed release 9.8(4)" style (40 real items) isn't compared | Those findings get no version fact | If Cisco/network-device findings matter to Donna's team | Step 8 | open |
+| B-056 | **FP band in queue ordering.** It's shown beside the score; ordering is still by score only | "Usable for ordering" (2026-10-28) isn't built | Stage 3 UI: a sort/filter by band | Step 8 | planned |
+| B-057 | **Benchmark on real dispositions.** 44 constructed cases today; real analyst verdicts replace them as the measure | Constructed cases measure the rules we thought of | When analysts disposition real findings (Stage 3+) | Skill | waiting |
 
 ## UI and report (Stage 3)
 
@@ -86,7 +91,7 @@ Status: **open** · **waiting** (on data or a person) · **planned** (assigned t
 | B-071 | **Storage and API** (FastAPI) | B-030, B-033, B-034 and B-070 all depend on it | Stage 3 | BUILD_SPEC | planned |
 | B-072 | **GovCloud and Bedrock deployment;** elevated AWS permissions pending since 2026-10-07 | Can't deploy or use the model in GovCloud without them | When the permissions land | Kickoff | waiting |
 | B-073 | **Supply chain:** UBI 9 base image, hash-pinned install from `uv.lock`, FIPS-only crypto review | FedRAMP Moderate authorisation | Before the first deployable build | Kickoff | open |
-| B-074 | **Dependency review** of `defusedxml` (added in step 6) alongside B-073 | Every dependency needs a reason and a review | With B-073 | Step 6 | open |
+| B-074 | **Dependency review** of `defusedxml` (added in step 6) and `packaging` (step 8) alongside B-073 | Every dependency needs a reason and a review | With B-073 | Steps 6, 8 | open |
 | B-075 | **IP arrangement:** the customer owns the source, but Ampcus integrates in Phase 2 | Contractual | Before Phase 2 starts | Kickoff | waiting |
 
 ## Working practice
@@ -106,3 +111,5 @@ Status: **open** · **waiting** (on data or a person) · **planned** (assigned t
 | R-003 | CLI header used `·`, garbled on Windows consoles | 2026-10-27 | `cli.py` uses ASCII separators |
 | R-004 | No-CVSS scoring gap raised by the Qualys samples | 2026-10-26 (already handled by `severity_fallback`; now tested) | `test_host_scanners.py` |
 | R-005 | Real client samples were one `git add` away from GitHub | 2026-10-26 | `.gitignore` |
+| R-006 | B-017: Qualys "Authentication ON" didn't prove a per-host login | 2026-10-29 | `connectors/qualys.py` reads per-host "Authentication Failed" items; `host_auth` evidence; run warning |
+| R-007 | B-050: Qualys "potential" and Nessus `Credentialed_Scan=false` unused as FP signals | 2026-10-29 | `pipeline/assess_fp/host.py` rules 3–4 |

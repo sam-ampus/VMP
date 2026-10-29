@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12,<3.13"
 dependencies = [
     "defusedxml>=0.7.1",
+    "packaging>=26.3",
     "pydantic>=2.9,<3",
 ]
 
@@ -29,6 +30,7 @@ packages = ["src/vmp"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]  # the /benchmark package lives at the repo root
 addopts = "-q"
 
 [tool.ruff]

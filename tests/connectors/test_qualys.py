@@ -101,6 +101,36 @@ def test_scan_type_assessment_and_detection_time() -> None:
     assert asv_cert.evidence.model_extra["assessment"] == "asv"
 
 
+AUTH_FAILED = (b'<INFO number="105053" severity="1"><TITLE><![CDATA[Unix Authentication Failed]]>'
+               b'</TITLE><PCI_FLAG>0</PCI_FLAG><DIAGNOSIS>n/a</DIAGNOSIS><RESULT>x</RESULT></INFO>')
+
+
+def test_a_failed_login_makes_that_hosts_findings_unauthenticated_and_warns() -> None:
+    """'Authentication ON' is a setting; Qualys's per-host 'Authentication Failed' is a fact."""
+    raw = RAW.replace(b'<CAT value="Information gathering">',
+                      b'<CAT value="Information gathering">' + AUTH_FAILED, 1)
+    report = run(raw)
+    q = by_qid(report)
+    failed, other = q["38173"], q["150004"]  # web01 failed its login; the other host didn't
+    assert failed.source.scan_type is ScanType.UNAUTHENTICATED_NETWORK
+    assert failed.evidence.model_extra is not None
+    assert failed.evidence.model_extra["host_auth"] == (
+        "failed: QID 105053 Unix Authentication Failed")
+    assert other.source.scan_type is ScanType.AUTHENTICATED_NETWORK
+    assert other.evidence.model_extra is not None
+    assert other.evidence.model_extra["host_auth"] == "configured; no failure reported"
+    assert report.warnings == ("Qualys authentication was configured but failed on 1 host(s); "
+                               "their findings are recorded as unauthenticated",)
+    assert report.skipped == {"information_gathered": 4}  # still counted, never a finding
+
+
+def test_no_login_configured_means_no_host_auth_claim() -> None:
+    raw = RAW.replace(b"Windows Authentication ON, Unix Authentication ON", b"")
+    cert = by_qid(run(raw))["38173"]
+    assert cert.evidence.model_extra is not None
+    assert cert.evidence.model_extra["host_auth"] is None
+
+
 def test_exploit_sources_mean_true_and_silence_means_unknown() -> None:
     q = by_qid(run())
     assert q["38173"].exploit_signals.exploit_available is True

@@ -18,6 +18,7 @@ from vmp.connectors import CanonicalConnector, ScanContext, ingest
 from vmp.pipeline.assemble import build_scoring_input
 from vmp.pipeline.run import RunResult, run_folder
 from vmp.schema.enrichment import Enrichment
+from vmp.schema.enums import FPBand
 
 REPO = Path(__file__).resolve().parents[2]
 SEED = REPO / "seed" / "demo"
@@ -129,6 +130,23 @@ def test_cli_exit_code_and_json(tmp_path: Path, capsys: pytest.CaptureFixture[st
     assert "vulnerabilities: 66" in printed
     written = json.loads(out.read_text("utf-8"))
     assert (len(written["scored"]), len(written["vulnerabilities"])) == (67, 66)
+    assert "FP check (vulnerabilities; flags only, scores unchanged)" in printed
+    assert all("fp_assessment" in v for v in written["vulnerabilities"])
+    assert all("fp_assessment" in s for s in written["scored"])
+
+
+def test_fp_band_sits_beside_the_score_and_never_changes_it(result: RunResult) -> None:
+    """Decision 2026-10-28: 'probably not real' and 'dangerous if real' stay separate axes."""
+    not_affected = [v for v in result.vulnerabilities
+                    if v.fp.band is FPBand.CONFIRMED_NOT_APPLICABLE]
+    assert len(not_affected) == 1  # the demo's one Trivy finding the vendor marks not affected
+    peak = next(s for s in result.scored
+                if s.finding.finding_id == not_affected[0].assessment.peak_finding_id)
+    assert not_affected[0].assessment.score == peak.result.score
+    assert not any("fp" in f.name.lower() for f in peak.result.factors)
+    # Every vulnerability has a band, and every package vulnerability a certain one or a reason.
+    for v in result.vulnerabilities:
+        assert v.fp.rationale and len(v.fp.findings) == len(v.correlated.vulnerability.finding_ids)
 
 
 def test_demo_correlates_one_login_issue_reported_over_http_and_https(result: RunResult) -> None:

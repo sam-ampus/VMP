@@ -1,0 +1,24 @@
+{
+  "category": "superseded-patch",
+  "about": "The fix is already installed, often through a later update, but the finding is still reported (stale plugin, stale vulnerability DB).",
+  "cases": [
+    {"id": "sp-nessus-equal-versions", "truth": "false_positive", "expect": "likely_false_positive",
+     "why": "Nessus's own output shows the installed version equals the fixed version.",
+     "findings": [{"shape": "host", "tool": "nessus", "scan_type": "authenticated_network", "os": "Linux Kernel 5.15 on Ubuntu 22.04", "title": "Example Web Server < 2.4.58 Multiple Vulnerabilities", "family": "Web Servers", "cve": ["CVE-2023-45802"], "plugin_output": "Installed version : 2.4.58\nFixed version : 2.4.58"}]},
+    {"id": "sp-nessus-rpm-newer", "truth": "false_positive", "expect": "likely_false_positive",
+     "why": "A later RHEL errata (25.el7_9) superseded the one the check wants (21.el7_9).",
+     "findings": [{"shape": "host", "tool": "nessus", "scan_type": "authenticated_network", "os": "Red Hat Enterprise Linux Server 7.9", "title": "RHEL 7 : openssl (RHSA-2023:0001)", "family": "Red Hat Local Security Checks", "cve": ["CVE-2023-0101"], "plugin_output": "Remote package installed : openssl-1.0.2k-25.el7_9\nShould be : openssl-1.0.2k-21.el7_9"}]},
+    {"id": "sp-nessus-deb-newer", "truth": "false_positive", "expect": "likely_false_positive",
+     "why": "Debian deb11u5 is installed; the check asks for deb11u4.",
+     "findings": [{"shape": "host", "tool": "nessus", "scan_type": "authenticated_network", "os": "Debian 11", "title": "Debian DSA-0001-1 : openssl - security update", "family": "Debian Local Security Checks", "cve": ["CVE-2023-0102"], "plugin_output": "Remote package installed : openssl_1.1.1n-0+deb11u5\nShould be : openssl_1.1.1n-0+deb11u4"}]},
+    {"id": "sp-trivy-later-update", "truth": "false_positive", "expect": "confirmed_not_applicable",
+     "why": "A later package update (1.2.4) includes the 1.2.3 fix.",
+     "findings": [{"shape": "package", "purl": "pkg:deb/debian/libsup@1.2.4-1", "installed": "1.2.4-1", "fixed": ["1.2.3-1"], "cve": ["CVE-2023-0103"]}]},
+    {"id": "sp-nessus-still-below", "truth": "real", "expect": "low_likelihood",
+     "why": "Counterpart: credentialed scan, installed is below the fix.",
+     "findings": [{"shape": "host", "tool": "nessus", "scan_type": "authenticated_network", "os": "Linux Kernel 5.15 on Ubuntu 22.04", "title": "Example Web Server < 2.4.58 Multiple Vulnerabilities", "family": "Web Servers", "cve": ["CVE-2023-45802"], "plugin_output": "Installed version : 2.4.57\nFixed version : 2.4.58"}]},
+    {"id": "sp-nessus-rpm-older", "truth": "real", "expect": "low_likelihood",
+     "why": "Counterpart: the installed errata is older than the one required.",
+     "findings": [{"shape": "host", "tool": "nessus", "scan_type": "authenticated_network", "os": "Red Hat Enterprise Linux Server 7.9", "title": "RHEL 7 : openssl (RHSA-2023:0002)", "family": "Red Hat Local Security Checks", "cve": ["CVE-2023-0104"], "plugin_output": "Remote package installed : openssl-1.0.2k-19.el7\nShould be : openssl-1.0.2k-21.el7_9"}]}
+  ]
+}

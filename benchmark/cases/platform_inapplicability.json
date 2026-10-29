@@ -1,0 +1,24 @@
+{
+  "category": "platform-inapplicability",
+  "about": "The check is for a platform the host isn't running. Only a clear contradiction counts; an unsure OS fingerprint never does.",
+  "cases": [
+    {"id": "pi-windows-kb-on-linux", "truth": "false_positive", "expect": "likely_false_positive",
+     "why": "A Windows security update check on an Ubuntu host.",
+     "findings": [{"shape": "host", "tool": "nessus", "scan_type": "unauthenticated_network", "port": 445, "os": "Linux Kernel 5.15 on Ubuntu 22.04", "title": "KB5034441: Windows Security Update (January 2024)", "family": "Windows : Microsoft Bulletins", "cve": ["CVE-2024-20666"]}]},
+    {"id": "pi-redhat-check-on-ubuntu", "truth": "false_positive", "expect": "likely_false_positive",
+     "why": "A Red Hat package check on an Ubuntu host.",
+     "findings": [{"shape": "host", "tool": "nessus", "scan_type": "authenticated_network", "os": "Ubuntu 22.04", "title": "RHEL 8 : kernel (RHSA-2024:0001)", "family": "Red Hat Local Security Checks", "cve": ["CVE-2024-0301"]}]},
+    {"id": "pi-qualys-windows-on-linux", "truth": "false_positive", "expect": "likely_false_positive",
+     "why": "Qualys Windows-category check on a Linux host.",
+     "findings": [{"shape": "host", "tool": "qualys", "family": "Windows", "port": 445, "os": "Ubuntu / Linux 22.04", "title": "Microsoft Windows SMBv1 Remote Code Execution", "cve": ["CVE-2017-0144"], "result": "SMBv1 negotiated"}]},
+    {"id": "pi-windows-on-windows", "truth": "real", "expect": "low_likelihood",
+     "why": "Counterpart: Windows check on a Windows host, credentialed.",
+     "findings": [{"shape": "host", "tool": "nessus", "scan_type": "authenticated_network", "port": 445, "os": "Microsoft Windows Server 2019", "title": "KB5034441: Windows Security Update (January 2024)", "family": "Windows : Microsoft Bulletins", "cve": ["CVE-2024-20666"]}]},
+    {"id": "pi-unsure-fingerprint", "truth": "real", "expect": "low_likelihood",
+     "why": "Nessus lists two OS guesses; an unsure fingerprint is never a contradiction.",
+     "findings": [{"shape": "host", "tool": "nessus", "scan_type": "authenticated_network", "port": 445, "os": "Microsoft Windows Server 2019\nLinux Kernel 3.10", "title": "KB5034441: Windows Security Update (January 2024)", "family": "Windows : Microsoft Bulletins", "cve": ["CVE-2024-20666"]}]},
+    {"id": "pi-generic-linux", "truth": "real", "expect": "low_likelihood",
+     "why": "A generic Linux fingerprint doesn't contradict an Ubuntu check.",
+     "findings": [{"shape": "host", "tool": "nessus", "scan_type": "authenticated_network", "os": "Linux Kernel 5.15", "title": "Ubuntu 22.04 LTS : OpenSSL vulnerabilities (USN-0002-1)", "family": "Ubuntu Local Security Checks", "cve": ["CVE-2024-0302"], "plugin_output": "Remote package installed : libssl3_3.0.2-0ubuntu1.10\nShould be : libssl3_3.0.2-0ubuntu1.12"}]}
+  ]
+}

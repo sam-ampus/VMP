@@ -1,0 +1,27 @@
+{
+  "category": "unauthenticated-scan-inference",
+  "about": "The scanner couldn't log in, so it guessed the version from a banner. Distros backport fixes without changing that version, so these need a person; with a working login the same check is trustworthy.",
+  "cases": [
+    {"id": "ui-nessus-backported-banner", "truth": "false_positive", "expect": "needs_review",
+     "why": "Ubuntu backported the fix; the banner still says 8.9p1. Known limitation: without a login the rules can't see the backport, so this goes to review (counts against recall).",
+     "findings": [{"shape": "host", "tool": "nessus", "scan_type": "unauthenticated_network", "port": 22, "os": "Linux Kernel 5.15 on Ubuntu 22.04", "title": "OpenSSH < 9.6 Multiple Vulnerabilities", "family": "Misc.", "cve": ["CVE-2023-51385"], "description": "According to its banner, the version of OpenSSH running on the remote host is prior to 9.6.", "plugin_output": "Version source : SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.10\nInstalled version : 8.9p1\nFixed version : 9.6"}]},
+    {"id": "ui-qualys-potential-banner", "truth": "false_positive", "expect": "needs_review",
+     "why": "Qualys potential, from a distro-suffixed banner.",
+     "findings": [{"shape": "host", "tool": "qualys", "qualys_type": "potential", "port": 22, "os": "Ubuntu / Linux 22.04", "title": "OpenSSH Multiple Vulnerabilities", "cve": ["CVE-2023-51385"], "result": "Vulnerable SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.10 detected on port 22 over TCP."}]},
+    {"id": "ui-qualys-auth-failed", "truth": "real", "expect": "needs_review",
+     "why": "Login configured but failed on this host; the version check fell back to the banner.",
+     "findings": [{"shape": "host", "tool": "qualys", "scan_type": "unauthenticated_network", "host_auth": "failed: QID 105053 Unix Authentication Failed", "os": "Ubuntu / Linux 20.04", "title": "Nginx Multiple Vulnerabilities", "cve": ["CVE-2023-0201"], "result": "Vulnerable version of Nginx detected on port 443 - 1.18.0"}]},
+    {"id": "ui-qualys-authenticated-version", "truth": "real", "expect": "low_likelihood",
+     "why": "Same kind of check with a working login reads the installed package.",
+     "findings": [{"shape": "host", "tool": "qualys", "scan_type": "authenticated_network", "host_auth": "configured; no failure reported", "os": "Ubuntu / Linux 20.04", "title": "Nginx Multiple Vulnerabilities", "cve": ["CVE-2023-0201"], "result": "Vulnerable version of Nginx detected on port 443 - 1.18.0"}]},
+    {"id": "ui-qualys-unauthenticated-detection-title", "truth": "real", "expect": "needs_review",
+     "why": "Qualys names the check itself as an unauthenticated detection, even in a login scan.",
+     "findings": [{"shape": "host", "tool": "qualys", "scan_type": "authenticated_network", "host_auth": "configured; no failure reported", "os": "Ubuntu / Linux 22.04", "title": "OpenSSL Multiple Vulnerabilities (Unauthenticated Detection)", "cve": ["CVE-2023-0202"], "result": "Vulnerable OpenSSL version detected on port 443."}]},
+    {"id": "ui-nessus-local-check", "truth": "real", "expect": "low_likelihood",
+     "why": "Credentialed local check read the package database: installed is below the fix.",
+     "findings": [{"shape": "host", "tool": "nessus", "scan_type": "authenticated_network", "os": "Linux Kernel 5.15 on Ubuntu 22.04", "title": "Ubuntu 22.04 LTS : OpenSSH vulnerabilities (USN-0001-1)", "family": "Ubuntu Local Security Checks", "cve": ["CVE-2023-51385"], "plugin_output": "Remote package installed : openssh-server_1:8.9p1-3ubuntu0.4\nShould be : openssh-server_1:8.9p1-3ubuntu0.6"}]},
+    {"id": "ui-observed-config", "truth": "real", "expect": "low_likelihood",
+     "why": "A TLS setting is observed directly; no login or version needed.",
+     "findings": [{"shape": "host", "tool": "qualys", "scan_type": "unauthenticated_network", "os": "Ubuntu / Linux 22.04", "title": "SSL/TLS Server supports TLSv1.0", "result": "TLSv1.0 is supported"}]}
+  ]
+}
